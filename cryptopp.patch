@@ -1,0 +1,22 @@
+--- GNUmakefile	2021-04-30 20:30:49.187233761 +0800
++++ GNUmakefile	2021-04-30 20:33:38.002167955 +0800
+@@ -13,9 +13,9 @@
+ FP_ABI ?= hard
+ 
+ # Command and arguments
+-AR ?= ar
++AR ?= $TARGET-ar
+ ARFLAGS ?= -cr # ar needs the dash on OpenBSD
+-RANLIB ?= ranlib
++RANLIB ?= $TARGET-ranlib
+ 
+ CP ?= cp
+ MV ?= mv
+@@ -66,6 +66,7 @@
+ UNAMEX := $(shell uname -s 2>&1)
+ IS_AIX := $(shell echo "$(UNAMEX)" | $(GREP) -i -c "aix")
+ IS_SUN := $(shell echo "$(UNAMEX)" | $(GREP) -i -c "SunOS")
++LDFLAGS += -pthread
+ 
+ SUN_COMPILER := $(shell $(CXX) -V 2>&1 | $(GREP) -i -c -E 'CC: (Sun|Studio)')
+ GCC_COMPILER := $(shell $(CXX) --version 2>/dev/null | $(GREP) -v -E '(llvm|clang)' | $(GREP) -i -c -E '(gcc|g\+\+)')
