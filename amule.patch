@@ -1,0 +1,21 @@
+diff --color -ruN src/LibSocketAsio.cpp src.new/LibSocketAsio.cpp
+--- src/LibSocketAsio.cpp	2021-02-07 18:07:22.000000000 -0500
++++ src.new/LibSocketAsio.cpp	2021-12-17 06:07:41.401509987 -0500
+@@ -25,6 +25,8 @@
+ 
+ #include "config.h"		// Needed for HAVE_BOOST_SOURCES
+ 
++#include <wx/thread.h>		// wxMutex
++#include <wx/intl.h>		// _()
+ 
+ #ifdef _MSC_VER
+ #define _WIN32_WINNT 0x0501	// Boost complains otherwise
+@@ -57,8 +59,6 @@
+ #endif
+ 
+ #include "LibSocket.h"
+-#include <wx/thread.h>		// wxMutex
+-#include <wx/intl.h>		// _()
+ #include <common/Format.h>	// Needed for CFormat
+ #include "Logger.h"
+ #include "GuiEvents.h"
