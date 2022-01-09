@@ -1,22 +1,28 @@
---- m4/libupnp.m4
-+++ m4/libupnp.m4
-@@ -57,7 +57,6 @@ dnl	Test for --with-libupnp-prefix
- 	])
+--- configure	2022-01-10 00:02:47.576270047 +0900
++++ configure	2022-01-10 00:11:08.087933444 +0900
+@@ -9293,7 +9293,6 @@
+ fi
  
- dnl	Check for libupnp >= MIN_LIBUPNP_VERSION
--	AS_IF([test $cross_compiling = no], [
- 		AC_MSG_CHECKING([for libupnp version >= MIN_LIBUPNP_VERSION])
- 		AS_IF([test -n "$PKG_CONFIG"], [
- 			AS_IF([$PKG_CONFIG libupnp --exists], [
-@@ -84,11 +83,6 @@ dnl	Check for libupnp >= MIN_LIBUPNP_VER
- 		])
- 		AC_MSG_RESULT([$result$resultstr])
- 		libupnp_error="libupnp >= MIN_LIBUPNP_VERSION not found$resultstr"
--	], [
--dnl Currently cross-compilation with libupnp is not supported.
--		result=no
--		libupnp_error="cross compiling"
--	])
  
- dnl	Execute the right action.
- 	AS_IF([test ${result:-no} = yes], [$2], [$3])
+-	if test $cross_compiling = no; then :
+ 
+ 		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libupnp version >= 1.6.6" >&5
+ $as_echo_n "checking for libupnp version >= 1.6.6... " >&6; }
+@@ -9345,17 +9344,8 @@
+ 
+ 	if test ${result:-no} = yes; then :
+   LIBUPNP_CPPFLAGS="$LIBUPNP_CPPFLAGS -DENABLE_UPNP=1"
+-else
+-  enable_upnp=disabled
+-		{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING:
+-        UPnP code has been disabled because ${libupnp_error}." >&5
+-$as_echo "$as_me: WARNING:
+-        UPnP code has been disabled because ${libupnp_error}." >&2;}
+-_mule_warning_5=yes
+-_mule_has_warnings=yes
+ 
+ 
+-fi
+ 
+ 
+ 
