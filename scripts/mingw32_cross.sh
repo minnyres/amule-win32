@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Dependencies: g++ autoconf automake make patch autopoint bison flex gawk texinfo libtool
+# Dependencies: g++ autoconf automake make patch autopoint bison flex gawk texinfo libtool wget
 
 export TARGET=i686-w64-mingw32
 export BUILDDIR=$HOME/mingw32-cross
