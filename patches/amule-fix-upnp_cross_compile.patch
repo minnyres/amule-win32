@@ -1,5 +1,5 @@
---- a/m4/libupnp.m4
-+++ b/m4/libupnp.m4
+--- m4/libupnp.m4
++++ m4/libupnp.m4
 @@ -57,7 +57,6 @@ dnl	Test for --with-libupnp-prefix
  	])
  
