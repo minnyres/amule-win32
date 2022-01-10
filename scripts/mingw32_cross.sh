@@ -5,7 +5,7 @@
 set -e
 
 export TARGET=i686-w64-mingw32
-export BUILDDIR=$HOME/mingw32-cross
+export BUILDDIR=$PWD/../mingw32-cross
 export GCC_VERSION=8.3.0
 export MINGW_VERSION=6.0.0
 export BINUTILS_VERSION=2.37
