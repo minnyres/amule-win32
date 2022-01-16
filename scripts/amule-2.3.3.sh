@@ -101,6 +101,7 @@ cd aMule-2.3.3
 
 patch -p0 < ../../patches/amule-fix-upnp_cross_compile.patch
 patch -p0 < ../../patches/amule-fix-wchar_t.patch
+patch -p0 < ../../patches/amule-fix-unzip.patch
 
 ./autogen.sh
 ./configure CPPFLAGS="-I$BUILDDIR/tmp/zlib/include -I$BUILDDIR/tmp/libpng/include" LDFLAGS="-L$BUILDDIR/tmp/zlib/lib -L$BUILDDIR/tmp/libpng/lib"  --prefix=$BUILDDIR/pkg --host=$TARGET --enable-amule-daemon --enable-webserver --enable-amulecmd --enable-amule-gui --enable-cas --enable-wxcas --enable-alc --enable-alcc --enable-fileview --enable-static --enable-geoip --disable-debug --enable-optimize --enable-mmap --with-zlib=$BUILDDIR/tmp/zlib  --with-wx-prefix=$BUILDDIR/tmp/wxwidgets --with-wx-config=$BUILDDIR/tmp/wxwidgets/bin/wx-config --with-crypto-prefix=$BUILDDIR/tmp/cryptopp --with-libintl-prefix=$BUILDDIR/tmp/gettext --with-libiconv-prefix=$BUILDDIR/tmp/libiconv --with-geoip-static -with-geoip-lib=$BUILDDIR/tmp/geoip/lib --with-geoip-headers=$BUILDDIR/tmp/geoip/include  --with-libpng-prefix=$BUILDDIR/tmp/libpng --with-libpng-config=$BUILDDIR/tmp/libpng/bin/libpng-config --enable-static-boost --with-boost=$BUILDDIR/tmp/boost --with-libupnp-prefix=$BUILDDIR/tmp/libupnp --with-denoise-level=0 >configure.log.txt 2>&1

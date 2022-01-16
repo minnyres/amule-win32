@@ -1,0 +1,13 @@
+diff --git a/src/libs/common/FileFunctions.cpp b/src/libs/common/FileFunctions.cpp
+index 4db0d1237..b5fc3481f 100644
+--- src/libs/common/FileFunctions.cpp
++++ src/libs/common/FileFunctions.cpp
+@@ -162,7 +162,7 @@ static bool UnpackZipFile(const wxString& file, const wxChar* files[])
+ 		}
+ 	}
+ 
+-	if (target.Length()) {
++	if (target.Length() && fileInputStream.close()) {
+ 		target.Commit();
+ 		return true;
+ 	}
