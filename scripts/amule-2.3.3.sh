@@ -61,10 +61,10 @@ b2 --user-config=./user-config.jam --build-dir=$PWD/build-boost --prefix=$BUILDD
 
 # wx
 cd $BUILDDIR
-wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.0.5/wxWidgets-3.0.5.tar.bz2
-tar -xf wxWidgets-3.0.5.tar.bz2
-cd wxWidgets-3.0.5
-./configure CPPFLAGS="-I$BUILDDIR/tmp/zlib/include" LDFLAGS="-L$BUILDDIR/tmp/zlib/lib"  --host=$TARGET --prefix=$BUILDDIR/tmp/wxwidgets --with-zlib=sys --with-msw --with-libiconv-prefix=$BUILDDIR/tmp/libiconv --disable-shared --disable-debug_flag
+wget http://prdownloads.sourceforge.net/wxwindows/wxWidgets-2.8.12.tar.bz2
+tar -xf wxWidgets-2.8.12.tar.bz2
+cd wxWidgets-2.8.12
+./configure CPPFLAGS="-I$BUILDDIR/tmp/zlib/include" LDFLAGS="-L$BUILDDIR/tmp/zlib/lib"  --host=$TARGET --prefix=$BUILDDIR/tmp/wxwidgets --with-zlib=sys --with-msw --with-libiconv-prefix=$BUILDDIR/tmp/libiconv --disable-shared --disable-debug_flag --enable-unicode
 make install
 
 # geoip
@@ -104,7 +104,7 @@ patch -p0 < ../../patches/amule-fix-wchar_t.patch
 patch -p0 < ../../patches/amule-fix-unzip.patch
 
 ./autogen.sh
-./configure CPPFLAGS="-I$BUILDDIR/tmp/zlib/include -I$BUILDDIR/tmp/libpng/include" LDFLAGS="-L$BUILDDIR/tmp/zlib/lib -L$BUILDDIR/tmp/libpng/lib"  --prefix=$BUILDDIR/pkg --host=$TARGET --enable-amule-daemon --enable-webserver --enable-amulecmd --enable-amule-gui --enable-cas --enable-wxcas --enable-alc --enable-alcc --enable-fileview --enable-static --enable-geoip --disable-debug --enable-optimize --enable-mmap --with-zlib=$BUILDDIR/tmp/zlib  --with-wx-prefix=$BUILDDIR/tmp/wxwidgets --with-wx-config=$BUILDDIR/tmp/wxwidgets/bin/wx-config --with-crypto-prefix=$BUILDDIR/tmp/cryptopp --with-libintl-prefix=$BUILDDIR/tmp/gettext --with-libiconv-prefix=$BUILDDIR/tmp/libiconv --with-geoip-static -with-geoip-lib=$BUILDDIR/tmp/geoip/lib --with-geoip-headers=$BUILDDIR/tmp/geoip/include  --with-libpng-prefix=$BUILDDIR/tmp/libpng --with-libpng-config=$BUILDDIR/tmp/libpng/bin/libpng-config --enable-static-boost --with-boost=$BUILDDIR/tmp/boost --with-libupnp-prefix=$BUILDDIR/tmp/libupnp --with-denoise-level=0 >configure.log.txt 2>&1
+./configure CPPFLAGS="-I$BUILDDIR/tmp/zlib/include -I$BUILDDIR/tmp/libpng/include" LDFLAGS="-L$BUILDDIR/tmp/zlib/lib -L$BUILDDIR/tmp/libpng/lib"  --prefix=$BUILDDIR/pkg --host=$TARGET --enable-amule-daemon --enable-webserver --enable-amulecmd --enable-amule-gui --enable-cas --enable-wxcas --enable-alc --enable-alcc --enable-fileview --enable-static --enable-geoip --disable-debug --enable-optimize --enable-mmap --with-zlib=$BUILDDIR/tmp/zlib  --with-wx-prefix=$BUILDDIR/tmp/wxwidgets --with-wx-config=$BUILDDIR/tmp/wxwidgets/bin/wx-config --with-crypto-prefix=$BUILDDIR/tmp/cryptopp --with-libintl-prefix=$BUILDDIR/tmp/gettext --with-libiconv-prefix=$BUILDDIR/tmp/libiconv --with-geoip-static -with-geoip-lib=$BUILDDIR/tmp/geoip/lib --with-geoip-headers=$BUILDDIR/tmp/geoip/include  --with-libpng-prefix=$BUILDDIR/tmp/libpng --with-libpng-config=$BUILDDIR/tmp/libpng/bin/libpng-config --enable-static-boost --with-boost=$BUILDDIR/tmp/boost --with-libupnp-prefix=$BUILDDIR/tmp/libupnp --enable-ccache --with-denoise-level=0 >configure.log.txt 2>&1
 make install BOOST_SYSTEM_LIBS="$BUILDDIR/tmp/boost/lib/libboost_system.a -lws2_32" 
 
 # strip and archive 
