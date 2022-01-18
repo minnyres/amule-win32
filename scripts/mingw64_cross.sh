@@ -67,11 +67,10 @@ cd $BUILDDIR/tmp/mingw-w64-v$MINGW_VERSION/mingw-w64-crt/
 make -j$(nproc) && make install
 
 # winpthreads
+ln -s lib $BUILDDIR/$TARGET/lib64
 cd $BUILDDIR/tmp/mingw-w64-v$MINGW_VERSION/mingw-w64-libraries/winpthreads/
 ./configure --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-shared=no --enable-static
 make -j$(nproc) && make install
-
-ln -s lib $BUILDDIR/$TARGET/lib64
 
 # gcc libs
 cd $BUILDDIR/tmp/gcc-$GCC_VERSION/build
