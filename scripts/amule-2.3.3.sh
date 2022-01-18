@@ -2,11 +2,25 @@
 
 # Dependencies: g++ autoconf automake make patch autopoint bison flex gawk texinfo libtool git wget unzip gettext p7zip-full
 
+# Help:
+# ARCH=x64 ./amule-2.3.3.sh
+# or
+# ARCH=x86 ./amule-2.3.3.sh
+
 set -e
 
-export BUILDDIR=$PWD/../amule-build
-export TARGET=i686-w64-mingw32
-export PATH=$PWD/../mingw32-cross/bin:$PATH
+if [ "$ARCH" == "x86" ];then
+    export BUILDDIR=$PWD/../amule-build-win32
+    export TARGET=i686-w64-mingw32
+    export PATH=$PWD/../mingw32-cross/bin:$PATH
+elif [ "$ARCH" == "x64" ];then
+    export BUILDDIR=$PWD/../amule-build-win64
+    export TARGET=x86_64-w64-mingw32
+    export PATH=$PWD/../mingw64-cross/bin:$PATH
+else 
+    echo "Please set the variable 'ARCH': x86 or x64."
+    exit
+fi
 
 mkdir -p $BUILDDIR
 
@@ -34,6 +48,8 @@ wget http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.16.tar.gz
 tar -xf libiconv-1.16.tar.gz
 cd libiconv-1.16
 ./configure --host=$TARGET --prefix=$BUILDDIR/tmp/libiconv --enable-static=yes --enable-shared=no
+mkdir -p $BUILDDIR/tmp/libiconv/lib
+ln -s lib $BUILDDIR/tmp/libiconv/lib64
 make install
 
 # gettext
@@ -42,6 +58,8 @@ wget http://ftp.gnu.org/pub/gnu/gettext/gettext-0.18.3.2.tar.gz
 tar -xf gettext-0.18.3.2.tar.gz
 cd gettext-0.18.3.2
 ./configure --host=$TARGET --prefix=$BUILDDIR/tmp/gettext --with-libiconv-prefix=$BUILDDIR/tmp/libiconv --enable-shared=no --enable-static=yes --enable-threads=posix
+mkdir -p $BUILDDIR/tmp/gettext/lib
+ln -s lib $BUILDDIR/tmp/gettext/lib64
 make install
 
 # boost
@@ -61,10 +79,12 @@ b2 --user-config=./user-config.jam --build-dir=$PWD/build-boost --prefix=$BUILDD
 
 # wx
 cd $BUILDDIR
-wget http://prdownloads.sourceforge.net/wxwindows/wxWidgets-2.8.12.tar.bz2
-tar -xf wxWidgets-2.8.12.tar.bz2
-cd wxWidgets-2.8.12
+wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.5/wxWidgets-3.1.5.tar.bz2
+tar -xf wxWidgets-3.1.5.tar.bz2
+cd wxWidgets-3.1.5
 ./configure CPPFLAGS="-I$BUILDDIR/tmp/zlib/include" LDFLAGS="-L$BUILDDIR/tmp/zlib/lib"  --host=$TARGET --prefix=$BUILDDIR/tmp/wxwidgets --with-zlib=sys --with-msw --with-libiconv-prefix=$BUILDDIR/tmp/libiconv --disable-shared --disable-debug_flag --enable-unicode
+mkdir -p $BUILDDIR/tmp/wxwidgets/lib
+ln -s lib $BUILDDIR/tmp/wxwidgets/lib64
 make install
 
 # geoip
@@ -73,6 +93,8 @@ git clone https://github.com/maxmind/geoip-api-c.git
 cd geoip-api-c
 ./bootstrap
 ./configure --host=$TARGET --prefix=$BUILDDIR/tmp/geoip --enable-shared=no
+mkdir -p $BUILDDIR/tmp/geoip/lib
+ln -s lib $BUILDDIR/tmp/geoip/lib64
 make install
 
 # libpng
@@ -81,6 +103,8 @@ wget https://download.sourceforge.net/libpng/libpng-1.6.37.tar.xz
 tar -xf libpng-1.6.37.tar.xz
 cd libpng-1.6.37
 ./configure CPPFLAGS="-I$BUILDDIR/tmp/zlib/include" CFLAGS="-I$BUILDDIR/tmp/zlib/include" LDFLAGS="-L$BUILDDIR/tmp/zlib/lib" --host=$TARGET --prefix=$BUILDDIR/tmp/libpng --with-zlib-prefix=$BUILDDIR/tmp/zlib --enable-shared=no 
+mkdir -p $BUILDDIR/tmp/libpng/lib
+ln -s lib $BUILDDIR/tmp/libpng/lib64
 make install
 sed -i 's/libs="-lpng16"/libs="-lpng16 -lz"/g'  $BUILDDIR/tmp/libpng/bin/libpng-config
 
@@ -90,6 +114,8 @@ wget https://github.com/pupnp/pupnp/releases/download/release-1.14.12/libupnp-1.
 tar -xf libupnp-1.14.12.tar.bz2
 cd libupnp-1.14.12
 ./configure --host=$TARGET --prefix=$BUILDDIR/tmp/libupnp --enable-static=yes --enable-shared=no --disable-samples --disable-ipv6
+mkdir -p $BUILDDIR/tmp/libupnp/lib
+ln -s lib $BUILDDIR/tmp/libupnp/lib64
 make install
 sed -i 's/-lupnp -lixml/& -liphlpapi -lws2_32 /g'  $BUILDDIR/tmp/libupnp/lib/pkgconfig/libupnp.pc
 
