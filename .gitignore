@@ -1,2 +1,5 @@
 /mingw32-cross/
+/mingw64-cross/
 /amule-build/
+/amule-build-win32/
+/amule-build-win64/
