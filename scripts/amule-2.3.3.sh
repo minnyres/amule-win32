@@ -79,9 +79,9 @@ b2 --user-config=./user-config.jam --build-dir=$PWD/build-boost --prefix=$BUILDD
 
 # wx
 cd $BUILDDIR
-wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.5/wxWidgets-3.1.5.tar.bz2
-tar -xf wxWidgets-3.1.5.tar.bz2
-cd wxWidgets-3.1.5
+wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.0.5/wxWidgets-3.0.5.tar.bz2
+tar -xf wxWidgets-3.0.5.tar.bz2
+cd wxWidgets-3.0.5
 ./configure CPPFLAGS="-I$BUILDDIR/tmp/zlib/include" LDFLAGS="-L$BUILDDIR/tmp/zlib/lib"  --host=$TARGET --prefix=$BUILDDIR/tmp/wxwidgets --with-zlib=sys --with-msw --with-libiconv-prefix=$BUILDDIR/tmp/libiconv --disable-shared --disable-debug_flag --enable-unicode
 mkdir -p $BUILDDIR/tmp/wxwidgets/lib
 ln -s lib $BUILDDIR/tmp/wxwidgets/lib64
