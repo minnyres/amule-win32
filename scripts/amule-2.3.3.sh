@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Dependencies: g++ autoconf automake make patch autopoint bison flex gawk texinfo libtool git wget gettext p7zip-full
+# Dependencies: g++ autoconf automake make patch autopoint bison flex gawk texinfo libtool git wget gettext p7zip-full ccache
 
 # Run with:
 # ARCH=x64 ./amule-2.3.3.sh
