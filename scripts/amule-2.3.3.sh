@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 
-# Dependencies: g++ autoconf automake make patch autopoint bison flex gawk texinfo libtool git wget unzip gettext p7zip-full
+# Dependencies: g++ autoconf automake make patch autopoint bison flex gawk texinfo libtool git wget gettext p7zip-full
 
-# Help:
+# Run with:
 # ARCH=x64 ./amule-2.3.3.sh
 # or
 # ARCH=x86 ./amule-2.3.3.sh
@@ -38,7 +38,7 @@ wget http://cryptopp.com/cryptopp610.zip
 mkdir cryptopp
 cd cryptopp
 7z x ../cryptopp610.zip
-patch -p0 <  ../../patches/cryptopp-fix-makefile.patch
+patch -p0 <  ../../patches/cryptopp610-fix-makefile.patch
 CXX=$TARGET-g++ RANLIB=$TARGET-ranlib AR=$TARGET-ar LDLIBS=-lws2_32 make static -f GNUmakefile
 PREFIX=$BUILDDIR/tmp/cryptopp make -f GNUmakefile install
 
