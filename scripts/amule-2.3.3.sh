@@ -34,12 +34,11 @@ make install
 
 # cryptopp
 cd $BUILDDIR
-wget http://cryptopp.com/cryptopp610.zip
+wget http://cryptopp.com/cryptopp860.zip
 mkdir cryptopp
 cd cryptopp
-7z x ../cryptopp610.zip
-patch -p0 <  ../../patches/cryptopp610-fix-makefile.patch
-CXX=$TARGET-g++ RANLIB=$TARGET-ranlib AR=$TARGET-ar LDLIBS=-lws2_32 make static -f GNUmakefile
+7z x ../cryptopp860.zip
+CXX=$TARGET-g++ RANLIB=$TARGET-ranlib AR=$TARGET-ar LDLIBS=-lws2_32 make -f GNUmakefile
 PREFIX=$BUILDDIR/tmp/cryptopp make -f GNUmakefile install
 
 # libiconv
