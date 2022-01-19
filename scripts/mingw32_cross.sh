@@ -6,8 +6,8 @@ set -e
 
 export TARGET=i686-w64-mingw32
 export BUILDDIR=$PWD/../mingw32-cross
-export GCC_VERSION=8.3.0
-export MINGW_VERSION=6.0.0
+export GCC_VERSION=11.2.0
+export MINGW_VERSION=9.0.0
 export BINUTILS_VERSION=2.37
 export MPFR_VERSION=4.1.0
 export MPC_VERSION=1.2.1
@@ -35,7 +35,7 @@ make -j$(nproc) && make install
 cd $BUILDDIR/tmp
 tar -xf mingw-w64-v$MINGW_VERSION.tar.bz2
 cd mingw-w64-v$MINGW_VERSION/mingw-w64-headers
-./configure --prefix=$BUILDDIR/$TARGET --host=$TARGET
+./configure --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-sdk=all --enable-idl --enable-secure-api --with-default-msvcrt=msvcrt --with-default-win32-winnt=0x0600
 make all && make install
 
 # gcc-core
@@ -63,7 +63,7 @@ export PATH=$BUILDDIR/bin:$PATH
 
 # mingw-w64 crt
 cd $BUILDDIR/tmp/mingw-w64-v$MINGW_VERSION/mingw-w64-crt/
-./configure --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-lib64=no --enable-lib32 
+./configure --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-lib64=no --enable-lib32 --with-default-msvcrt=msvcrt --with-default-win32-winnt=0x0600
 make -j$(nproc) && make install
 
 # winpthreads

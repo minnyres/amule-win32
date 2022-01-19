@@ -53,10 +53,10 @@ make install
 
 # gettext
 cd $BUILDDIR
-wget http://ftp.gnu.org/pub/gnu/gettext/gettext-0.18.3.2.tar.gz
-tar -xf gettext-0.18.3.2.tar.gz
-cd gettext-0.18.3.2
-./configure --host=$TARGET --prefix=$BUILDDIR/tmp/gettext --with-libiconv-prefix=$BUILDDIR/tmp/libiconv --enable-shared=no --enable-static=yes --enable-threads=posix
+wget http://ftp.gnu.org/pub/gnu/gettext/gettext-0.21.tar.xz
+tar -xf gettext-0.21.tar.xz
+cd gettext-0.21
+./configure CPPFLAGS="-I$BUILDDIR/tmp/libiconv/include"  LDFLAGS="-L$BUILDDIR/tmp/libiconv/lib" --host=$TARGET --prefix=$BUILDDIR/tmp/gettext --with-libiconv-prefix=$BUILDDIR/tmp/libiconv --enable-shared=no --enable-static=yes --enable-threads=posix
 mkdir -p $BUILDDIR/tmp/gettext/lib
 ln -s lib $BUILDDIR/tmp/gettext/lib64
 make install
