@@ -8,7 +8,7 @@ Download the binary files at the [releases](https://github.com/minnyres/amule-wi
 
 ## Usage
 
-### Use translation
+### Use translations
 
 The default GUI language is English. To use translations, select your language at `Preferences->General->Language`.
 
@@ -50,4 +50,4 @@ Build aMule
 
     ARCH=x86 ./amule-2.3.3.sh
 
-This will create a new directory `amule-build-win32` in the repository. The build package in the 7-Zip file `amule-build-win32/amule-2.3.3-win32.7z`.
+This will create a new directory `amule-build-win32` in the repository. The build package is archived in the 7-Zip file `amule-build-win32/amule-2.3.3-win32.7z`.
