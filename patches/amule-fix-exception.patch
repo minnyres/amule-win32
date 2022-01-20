@@ -1,0 +1,10 @@
+--- src/libs/common/MuleDebug.cpp	2022-01-20 13:03:19.479006206 +0900
++++ src/libs/common/MuleDebug.cpp	2022-01-20 12:28:58.257027959 +0900
+@@ -55,6 +55,7 @@
+ #endif
+ 
+ #include <vector>
++#include <exception>
+ 
+ 
+ /**
