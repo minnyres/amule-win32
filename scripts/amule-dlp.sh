@@ -3,9 +3,9 @@
 # Dependencies: g++ autoconf automake make patch autopoint bison flex gawk texinfo libtool git wget gettext p7zip-full ccache
 
 # Run with:
-# ARCH=x64 ./amule-2.3.3.sh
+# ARCH=x64 ./amule-dlp.sh
 # or
-# ARCH=x86 ./amule-2.3.3.sh
+# ARCH=x86 ./amule-dlp.sh
 
 set -e
 
