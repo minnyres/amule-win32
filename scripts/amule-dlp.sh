@@ -147,6 +147,7 @@ $TARGET-strip $BUILDDIR/pkg/bin/*
 cd $BUILDDIR
 mkdir amule-dlp
 cp pkg/bin/*.exe amule-dlp
+cp amule-dlp.antiLeech/antileech.dll amule-dlp
 cp -r pkg/share/locale/ amule-dlp
 cp -r pkg/share/amule-dlp/* amule-dlp
 mkdir amule-dlp/docs
