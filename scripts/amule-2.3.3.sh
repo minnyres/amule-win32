@@ -145,3 +145,4 @@ cp -r pkg/share/amule/* amule
 mkdir amule/docs
 cp pkg/share/doc/amule/* amule/docs
 7z a amule-2.3.3-win32.7z amule
+mv amule-2.3.3-win32.7z ..

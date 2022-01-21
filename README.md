@@ -50,4 +50,4 @@ Build aMule
 
     ARCH=x86 ./amule-2.3.3.sh
 
-This will create a new directory `amule-build-win32` in the repository. The build package is archived in the 7-Zip file `amule-build-win32/amule-2.3.3-win32.7z`.
+This will create a temporary working directory `amule-build-win32`. The build package is archived in the 7-Zip file `amule-2.3.3-win32.7z`.

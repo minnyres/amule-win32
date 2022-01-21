@@ -120,8 +120,8 @@ sed -i 's/-lupnp -lixml/& -liphlpapi -lws2_32 /g'  $BUILDDIR/tmp/libupnp/lib/pkg
 
 # amule-dlp
 cd $BUILDDIR
-git clone https://github.com/persmule/amule-dlp.git
-cd amule-dlp
+git clone https://github.com/persmule/amule-dlp.git amule-dlp.git
+cd amule-dlp.git
 
 patch -p0 < ../../patches/amule-fix-upnp_cross_compile.patch
 patch -p0 < ../../patches/amule-fix-wchar_t.patch
@@ -136,8 +136,8 @@ make install
 
 # libantileech
 cd $BUILDDIR
-git clone https://github.com/persmule/amule-dlp.antiLeech.git
-cd amule-dlp.antiLeech
+git clone https://github.com/persmule/amule-dlp.antiLeech.git amule-dlp.antiLeech.git
+cd amule-dlp.antiLeech.git
 patch -p1 < ../../patches/amule-fix-libantiLeech.patch
 export PATH=$BUILDDIR/tmp/wxwidgets/bin:$PATH
 $TARGET-g++ -O2 -g -s -fPIC -shared antiLeech.cpp antiLeech_wx.cpp Interface.cpp -o antileech.dll $(wx-config --cppflags) $(wx-config --libs)
@@ -154,3 +154,4 @@ cp -r pkg/share/amule-dlp/* amule-dlp
 mkdir amule-dlp/docs
 cp pkg/share/doc/amule-dlp/* amule-dlp/docs
 7z a amule-dlp-$(printf '%(%Y-%m-%d)T\n' -1)-win32.7z amule-dlp
+mv amule-dlp-*-win32.7z ..
