@@ -139,6 +139,7 @@ cd $BUILDDIR
 git clone https://github.com/persmule/amule-dlp.antiLeech.git
 cd amule-dlp.antiLeech
 patch -p1 < ../../patches/amule-fix-libantiLeech.patch
+export PATH=$BUILDDIR/tmp/wxwidgets/bin:$PATH
 $TARGET-g++ -O2 -g -s -fPIC -shared antiLeech.cpp antiLeech_wx.cpp Interface.cpp -o antileech.dll $(wx-config --cppflags) $(wx-config --libs)
 
 # strip and archive 
