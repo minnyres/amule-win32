@@ -1,11 +1,9 @@
 #!/usr/bin/bash
 
-# Dependencies: g++ autoconf automake make patch autopoint bison flex gawk texinfo libtool wget
-
 set -e
 
 export TARGET=i686-w64-mingw32
-export BUILDDIR=$PWD/../mingw32-cross
+export BUILDDIR=$PWD/toolchain/mingw32
 export GCC_VERSION=11.2.0
 export MINGW_VERSION=9.0.0
 export BINUTILS_VERSION=2.37
