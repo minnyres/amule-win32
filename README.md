@@ -22,13 +22,11 @@ I build aMule for Windows by cross compiling with Mingw-w64 GCC on GNU/Linux. To
  + g++
  + autoconf
  + automake
- + autopoint
  + make
  + patch
  + bison
  + flex
  + gawk
- + texinfo
  + libtool
  + git
  + wget 
@@ -40,14 +38,21 @@ Checkout the repository
 
     git clone https://github.com/minnyres/amule-win32.git
     cd amule-win32
+    
+Download the source code
+
+    ./scripts/download.sh
 
 Build the Mingw-w64 cross toolchain:
 
-    cd scripts
-    ./mingw32_cross.sh
+    ./scripts/mingw32_cross.sh
+    
+Add the toolchain path to the environment:
+
+    export PATH=$PWD/toolchain/mingw32/bin/:$PATH
 
 Build aMule 
 
-    ARCH=x86 ./amule-2.3.3.sh
+    TARGET=i686-w64-mingw32 ./scripts/build-all.sh
 
-This will create a temporary working directory `amule-build-win32`. The build package is archived in the 7-Zip file `amule-2.3.3-win32.7z`.
+The build package is archived in the 7-Zip file `amule-<version>-win32.7z`.
