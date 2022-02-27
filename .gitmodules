@@ -1,0 +1,3 @@
+[submodule "llvm-mingw"]
+	path = llvm-mingw
+	url = https://github.com/mstorsjo/llvm-mingw.git
