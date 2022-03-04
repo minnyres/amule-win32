@@ -1,4 +1,5 @@
 /src/
 /toolchain/
+/build-armv7-w64-mingw32/
 /build-i686-w64-mingw32/
 *.7z
