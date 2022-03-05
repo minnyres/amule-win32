@@ -45,7 +45,7 @@ patch -p1 -R < ../../patches/amule-fix-dlp.patch
 cd ../amule-dlp.antiLeech
 patch -p1 < ../../patches/amule-fix-libantiLeech.patch
 export PATH=$BUILDDIR/wxwidgets/bin:$PATH
-$TARGET-g++ -O2 -g -s -fPIC -shared antiLeech.cpp antiLeech_wx.cpp Interface.cpp -o antileech.dll $(wx-config --cppflags) $(wx-config --libs)
+$TARGET-g++ -O2 -s -fPIC -shared antiLeech.cpp antiLeech_wx.cpp Interface.cpp -o antileech.dll $(wx-config --cppflags) $(wx-config --libs)
 mv antileech.dll $BUILDDIR/amule-dlp/bin
 patch -p1 -R < ../../patches/amule-fix-libantiLeech.patch
 
