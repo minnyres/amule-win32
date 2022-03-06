@@ -3,20 +3,24 @@
 set -e
 
 export BUILDDIR=$PWD/build-$TARGET
+export RC=$PWD/toolchain/mingw32/bin/i686-w64-mingw32-windres
 
+# amule-dlp
 cd src
-tar -xf aMule-2.3.3.tar.xz
-cd aMule-2.3.3
+7z x amule-dlp-master.zip
+cd amule-dlp-master
 
 patch -p0 < ../../patches/amule-fix-upnp_cross_compile.patch
 patch -p0 < ../../patches/amule-fix-wchar_t.patch
 patch -p0 < ../../patches/amule-fix-exception.patch
 patch -p1 < ../../patches/amule-fix-unzip.patch
+patch -p1 < ../../patches/amule-fix-dlp.patch
+patch -p1 < ../../patches/amule-fix-boost_llvm.patch
 
 ./autogen.sh
 ./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include" \
     LDFLAGS="-L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib"  \
-    --prefix=$BUILDDIR/amule --host=$TARGET \
+    --prefix=$BUILDDIR/amule-dlp --host=$TARGET \
     --enable-amule-daemon --enable-webserver --enable-amulecmd --enable-amule-gui \
     --enable-cas --enable-wxcas --enable-alc --enable-alcc --enable-fileview \
     --enable-static --enable-geoip --disable-debug --enable-optimize --enable-mmap \
@@ -27,22 +31,32 @@ patch -p1 < ../../patches/amule-fix-unzip.patch
     --with-geoip-static -with-geoip-lib=$BUILDDIR/geoip/lib --with-geoip-headers=$BUILDDIR/geoip/include \
     --with-libpng-prefix=$BUILDDIR/libpng --with-libpng-config=$BUILDDIR/libpng/bin/libpng-config \
     --enable-static-boost --with-boost=$BUILDDIR/boost \
-    --with-libupnp-prefix=$BUILDDIR/libupnp 
+    --with-libupnp-prefix=$BUILDDIR/libupnp --with-denoise-level=0 
 
 make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lws2_32" BOOST_SYSTEM_LDFLAGS="-L$BUILDDIR/boost/lib" -j$(nproc)
 make install
+cd ..
+rm -rf amule-dlp-master
+
+# libantileech
+7z x amule-dlp.antiLeech-master.zip
+cd amule-dlp.antiLeech-master
+patch -p1 < ../../patches/amule-fix-libantiLeech.patch
+export PATH=$BUILDDIR/wxwidgets/bin:$PATH
+$TARGET-g++ -O2 -s -fPIC -shared antiLeech.cpp antiLeech_wx.cpp Interface.cpp -o antileech.dll $(wx-config --cppflags) $(wx-config --libs)
+mv antileech.dll $BUILDDIR/amule-dlp/bin
+cd ..
+rm -rf amule-dlp.antiLeech-master
+
+$TARGET-strip $BUILDDIR/amule-dlp/bin/*.exe
 
 cd ..
-rm -rf aMule-2.3.3
-
-$TARGET-strip $BUILDDIR/amule/bin/*.exe
-
-cd ..
-mkdir amule
-cp $BUILDDIR/amule/bin/*.exe amule
-cp -r $BUILDDIR/amule/share/locale/ amule
-cp -r $BUILDDIR/amule/share/amule/* amule
-mkdir amule/docs
-cp $BUILDDIR/amule/share/doc/amule/* amule/docs
-7z a amule-2.3.3-win32.7z amule
-rm -rf amule
+mkdir amule-dlp
+cp $BUILDDIR/amule-dlp/bin/*.exe amule-dlp
+cp $BUILDDIR/amule-dlp/bin/*.dll amule-dlp
+cp -r $BUILDDIR/amule-dlp/share/locale/ amule-dlp
+cp -r $BUILDDIR/amule-dlp/share/amule-dlp/* amule-dlp
+mkdir amule-dlp/docs
+cp $BUILDDIR/amule-dlp/share/doc/amule-dlp/* amule-dlp/docs
+7z a amule-dlp-$(printf '%(%Y-%m-%d)T\n' -1)-win32.7z amule-dlp
+rm -rf amule-dlp

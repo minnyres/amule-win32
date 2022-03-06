@@ -31,7 +31,7 @@ patch -p1 < ../../patches/amule-fix-dlp.patch
     --enable-static-boost --with-boost=$BUILDDIR/boost \
     --with-libupnp-prefix=$BUILDDIR/libupnp 
 
-make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lws2_32" -j$(nproc)
+make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lws2_32" BOOST_SYSTEM_LDFLAGS="-L$BUILDDIR/boost/lib" -j$(nproc)
 make install
 cd ..
 rm -rf amule-dlp-master
@@ -48,7 +48,7 @@ rm -rf amule-dlp.antiLeech-master
 
 $TARGET-strip $BUILDDIR/amule-dlp/bin/*.exe
 
-cd ../..
+cd ..
 mkdir amule-dlp
 cp $BUILDDIR/amule-dlp/bin/*.exe amule-dlp
 cp $BUILDDIR/amule-dlp/bin/*.dll amule-dlp

@@ -1,0 +1,15 @@
+diff --git a/m4/boost.m4 b/m4/boost.m4
+index 9acd27044..dba748650 100644
+--- a/m4/boost.m4
++++ b/m4/boost.m4
+@@ -488,8 +488,8 @@ dnl generated only once above (before we start the for loops).
+             done
+             ;;
+           esac
+-          AS_IF([test "x$boost_rpath_link_ldflag_found" != "xyes"],
+-            [AC_MSG_ERROR([Unable to determine whether to use -R or -rpath])])
++          #AS_IF([test "x$boost_rpath_link_ldflag_found" != "xyes"],
++          #  [AC_MSG_ERROR([Unable to determine whether to use -R or -rpath])])
+           LDFLAGS=$boost_save_LDFLAGS
+           LIBS=$boost_save_LIBS
+           ])
