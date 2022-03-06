@@ -13,6 +13,5 @@ export BUILDDIR=$PWD/build-$TARGET
 ./scripts/geoip.sh
 ./scripts/libpng.sh 
 ./scripts/libupnp.sh 
-./scripts/libgd-cmake.sh
 ./scripts/amule-2.3.3.sh
 ./scripts/amule-dlp.sh 

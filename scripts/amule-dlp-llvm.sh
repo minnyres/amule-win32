@@ -20,7 +20,6 @@ patch -p1 < ../../patches/amule-fix-boost_llvm.patch
 ./autogen.sh
 ./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include" \
     LDFLAGS="-L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib"  \
-    PKG_CONFIG_PATH=$BUILDDIR/libgd/lib/pkgconfig/ \
     --prefix=$BUILDDIR/amule-dlp --host=$TARGET \
     --enable-amule-daemon --enable-webserver --enable-amulecmd --enable-amule-gui \
     --enable-cas --enable-wxcas --enable-alc --enable-alcc --enable-fileview \
@@ -55,7 +54,6 @@ cd ..
 mkdir amule-dlp
 cp $BUILDDIR/amule-dlp/bin/*.exe amule-dlp
 cp $BUILDDIR/amule-dlp/bin/*.dll amule-dlp
-cp $BUILDDIR/libgd/bin/libgd.dll amule-dlp
 cp -r $BUILDDIR/amule-dlp/share/locale/ amule-dlp
 cp -r $BUILDDIR/amule-dlp/share/amule-dlp/* amule-dlp
 mkdir amule-dlp/docs
