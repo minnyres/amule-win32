@@ -5,7 +5,9 @@ set -e
 export BUILDDIR=$PWD/build-$TARGET
 
 # amule-dlp
-cd src/amule-dlp
+cd src
+7z x amule-dlp-master.zip
+cd amule-dlp-master
 
 patch -p0 < ../../patches/amule-fix-upnp_cross_compile.patch
 patch -p0 < ../../patches/amule-fix-wchar_t.patch
@@ -27,27 +29,22 @@ patch -p1 < ../../patches/amule-fix-dlp.patch
     --with-geoip-static -with-geoip-lib=$BUILDDIR/geoip/lib --with-geoip-headers=$BUILDDIR/geoip/include \
     --with-libpng-prefix=$BUILDDIR/libpng --with-libpng-config=$BUILDDIR/libpng/bin/libpng-config \
     --enable-static-boost --with-boost=$BUILDDIR/boost \
-    --with-libupnp-prefix=$BUILDDIR/libupnp \
-    --enable-ccache --with-denoise-level=3 >configure.log.txt 2>&1
+    --with-libupnp-prefix=$BUILDDIR/libupnp 
 
 make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lws2_32" -j$(nproc)
 make install
-make clean
-make distclean
-
-patch -p0 -R < ../../patches/amule-fix-upnp_cross_compile.patch
-patch -p0 -R < ../../patches/amule-fix-wchar_t.patch
-patch -p0 -R < ../../patches/amule-fix-exception.patch
-patch -p1 -R < ../../patches/amule-fix-unzip.patch
-patch -p1 -R < ../../patches/amule-fix-dlp.patch
+cd ..
+rm -rf amule-dlp-master
 
 # libantileech
-cd ../amule-dlp.antiLeech
+7z x amule-dlp.antiLeech-master.zip
+cd amule-dlp.antiLeech-master
 patch -p1 < ../../patches/amule-fix-libantiLeech.patch
 export PATH=$BUILDDIR/wxwidgets/bin:$PATH
 $TARGET-g++ -O2 -s -fPIC -shared antiLeech.cpp antiLeech_wx.cpp Interface.cpp -o antileech.dll $(wx-config --cppflags) $(wx-config --libs)
 mv antileech.dll $BUILDDIR/amule-dlp/bin
-patch -p1 -R < ../../patches/amule-fix-libantiLeech.patch
+cd ..
+rm -rf amule-dlp.antiLeech-master
 
 $TARGET-strip $BUILDDIR/amule-dlp/bin/*.exe
 

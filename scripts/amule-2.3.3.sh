@@ -27,8 +27,7 @@ patch -p1 < ../../patches/amule-fix-unzip.patch
     --with-geoip-static -with-geoip-lib=$BUILDDIR/geoip/lib --with-geoip-headers=$BUILDDIR/geoip/include \
     --with-libpng-prefix=$BUILDDIR/libpng --with-libpng-config=$BUILDDIR/libpng/bin/libpng-config \
     --enable-static-boost --with-boost=$BUILDDIR/boost \
-    --with-libupnp-prefix=$BUILDDIR/libupnp \
-    --enable-ccache --with-denoise-level=3 >configure.log.txt 2>&1
+    --with-libupnp-prefix=$BUILDDIR/libupnp 
 
 make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lws2_32" -j$(nproc)
 make install

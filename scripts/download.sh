@@ -15,5 +15,5 @@ wget https://download.sourceforge.net/libpng/libpng-1.6.37.tar.xz
 wget https://github.com/pupnp/pupnp/releases/download/release-1.14.12/libupnp-1.14.12.tar.bz2
 wget http://prdownloads.sourceforge.net/amule/aMule-2.3.3.tar.xz
 git clone https://github.com/maxmind/geoip-api-c.git
-git clone https://github.com/persmule/amule-dlp.git
-git clone https://github.com/persmule/amule-dlp.antiLeech.git
+wget https://github.com/persmule/amule-dlp.antiLeech/archive/refs/heads/master.zip -O amule-dlp.antiLeech-master.zip
+wget https://github.com/persmule/amule-dlp/archive/refs/heads/master.zip -O amule-dlp-master.zip
