@@ -5,7 +5,7 @@ set -e
 export BUILDDIR=$PWD/build-$TARGET
 
 ./scripts/zlib.sh
-./scripts/cryptopp.sh
+./scripts/cryptopp-autotools.sh
 ./scripts/libiconv.sh 
 ./scripts/gettext.sh
 ./scripts/boost.sh
