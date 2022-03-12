@@ -2,6 +2,7 @@
 
 set -e
 
+export TARGET=i686-w64-mingw32
 export BUILDDIR=$PWD/build-$TARGET
 export USE_LLVM=no
 
