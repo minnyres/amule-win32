@@ -2,8 +2,6 @@
 
 set -e
 
-export BUILDDIR=$PWD/build-$TARGET
-
 cd src
 mkdir cryptopp
 cd cryptopp

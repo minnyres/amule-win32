@@ -2,8 +2,6 @@
 
 set -e
 
-export BUILDDIR=$PWD/build-$TARGET
-
 cd src/geoip-api-c
 ./bootstrap
 mkdir -p build-geoip

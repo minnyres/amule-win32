@@ -2,8 +2,6 @@
 
 set -e
 
-export BUILDDIR=$PWD/build-$TARGET
-
 cd src
 tar -xf gettext-0.21.tar.xz
 cd gettext-0.21

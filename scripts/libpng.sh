@@ -2,8 +2,6 @@
 
 set -e
 
-export BUILDDIR=$PWD/build-$TARGET
-
 cd src
 tar -xf libpng-1.6.37.tar.xz
 cd libpng-1.6.37

@@ -2,8 +2,6 @@
 
 set -e
 
-export BUILDDIR=$PWD/build-$TARGET
-
 cd src
 tar -xf libupnp-1.14.12.tar.bz2
 cd libupnp-1.14.12

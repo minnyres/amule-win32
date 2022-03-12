@@ -2,8 +2,6 @@
 
 set -e
 
-export BUILDDIR=$PWD/build-$TARGET
-
 cd src
 tar -xf libiconv-1.16.tar.gz
 cd libiconv-1.16

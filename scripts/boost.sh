@@ -2,8 +2,6 @@
 
 set -e
 
-export BUILDDIR=$PWD/build-$TARGET
-
 cd src
 7z x boost_1_78_0.7z
 cd boost_1_78_0/

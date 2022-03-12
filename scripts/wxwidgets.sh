@@ -2,8 +2,6 @@
 
 set -e
 
-export BUILDDIR=$PWD/build-$TARGET
-
 cd src
 tar -xf wxWidgets-3.0.5.tar.bz2
 cd wxWidgets-3.0.5

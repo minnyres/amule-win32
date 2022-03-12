@@ -3,9 +3,17 @@
 set -e
 
 export BUILDDIR=$PWD/build-$TARGET
+export USE_LLVM=no
+
+if [ "$USE_LLVM" == "yes" ]
+then
+    export PATH=$PWD/toolchain/clang/bin/:$PATH
+else
+    export PATH=$PWD/toolchain/mingw32/bin/:$PATH
+fi
 
 ./scripts/zlib.sh
-./scripts/cryptopp.sh
+./scripts/cryptopp-autotools.sh
 ./scripts/libiconv.sh 
 ./scripts/gettext.sh
 ./scripts/boost.sh

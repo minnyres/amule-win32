@@ -2,7 +2,10 @@
 
 set -e
 
-export BUILDDIR=$PWD/build-$TARGET
+if [ "$USE_LLVM" == "yes" ]
+then
+    export RC=$PWD/toolchain/mingw32/bin/i686-w64-mingw32-windres
+fi
 
 # amule-dlp
 cd src
@@ -14,6 +17,7 @@ patch -p0 < ../../patches/amule-fix-wchar_t.patch
 patch -p0 < ../../patches/amule-fix-exception.patch
 patch -p1 < ../../patches/amule-fix-unzip.patch
 patch -p1 < ../../patches/amule-fix-dlp.patch
+patch -p1 < ../../patches/amule-fix-boost_llvm.patch
 
 ./autogen.sh
 ./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include" \
@@ -29,7 +33,7 @@ patch -p1 < ../../patches/amule-fix-dlp.patch
     --with-geoip-static -with-geoip-lib=$BUILDDIR/geoip/lib --with-geoip-headers=$BUILDDIR/geoip/include \
     --with-libpng-prefix=$BUILDDIR/libpng --with-libpng-config=$BUILDDIR/libpng/bin/libpng-config \
     --enable-static-boost --with-boost=$BUILDDIR/boost \
-    --with-libupnp-prefix=$BUILDDIR/libupnp 
+    --with-libupnp-prefix=$BUILDDIR/libupnp --with-denoise-level=0 
 
 make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lws2_32" BOOST_SYSTEM_LDFLAGS="-L$BUILDDIR/boost/lib" -j$(nproc)
 make install

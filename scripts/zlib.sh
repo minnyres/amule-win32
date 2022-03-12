@@ -2,8 +2,6 @@
 
 set -e
 
-export BUILDDIR=$PWD/build-$TARGET
-
 cd src
 tar -xf zlib-1.2.11.tar.gz
 cd zlib-1.2.11/
