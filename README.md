@@ -19,15 +19,7 @@ With GeoIP aMule shows the country flags of peers. To enable GeoIP, you need to 
 ## Build from source
 
 I build aMule for Windows by cross compiling with Mingw-w64 GCC on GNU/Linux. To compile from source yourself, you need to work on a GNU/Linux system, with these packages installed:
- + gcc, g++
- + autoconf, automake, make
- + patch
- + bison, flex
- + pkg-config
- + libtool
- + git, wget 
- + gettext 
- + p7zip-full 
+> g++, autoconf, automake, make, patch, bison, flex, pkg-config, libtool, git, wget, gettext, p7zip-full 
 
 Checkout the repository
 
