@@ -33,13 +33,9 @@ Download the source code
 Build the Mingw-w64 cross toolchain:
 
     ./scripts/mingw32.sh
-    
-Add the toolchain path to the environment:
-
-    export PATH=$PWD/toolchain/mingw32/bin/:$PATH
 
 Build aMule 
 
-    TARGET=i686-w64-mingw32 ./scripts/build-all.sh
+    ./scripts/build-all.sh
 
 The build package is archived in the 7-Zip file `amule-<version>-win32.7z`.
