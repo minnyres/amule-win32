@@ -3,8 +3,13 @@
 set -e
 
 export TARGET=i686-w64-mingw32
-export BUILDDIR=$PWD/build-$TARGET
+export BUILDDIR=$PWD/build-win32
 export USE_LLVM=no
+export CXXFLAGS="-std=c++20 -g0 -O3"
+export CFLAGS="--std=c11 -g0 -O3"
+export AR=$TARGET-gcc-ar 
+export RANLIB=$TARGET-gcc-ranlib 
+export NM=$TARGET-gcc-nm
 
 if [ "$USE_LLVM" == "yes" ]
 then

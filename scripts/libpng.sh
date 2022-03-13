@@ -9,7 +9,8 @@ cd libpng-1.6.37
     --host=$TARGET --prefix=$BUILDDIR/libpng --with-zlib-prefix=$BUILDDIR/zlib --enable-shared=no 
 mkdir -p $BUILDDIR/libpng/lib
 ln -s lib $BUILDDIR/libpng/lib64
-make -j$(nproc) && make install
+make
+make install
 sed -i 's/libs="-lpng16"/libs="-lpng16 -lz"/g'  $BUILDDIR/libpng/bin/libpng-config
 cd ..
 rm -rf libpng-1.6.37
