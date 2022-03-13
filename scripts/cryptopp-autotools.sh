@@ -17,7 +17,7 @@ autoupdate
 libtoolize --force --install
 autoreconf --force --install
 
-CPPFLAGS="-DNDEBUG" ./configure --prefix=$BUILDDIR/cryptopp --host=$TARGET --enable-shared=no --enable-static 
+CPPFLAGS="-DNDEBUG" CXXFLAGS="-g2 -O3" ./configure --prefix=$BUILDDIR/cryptopp --host=$TARGET --enable-shared=no --enable-static 
 mkdir -p $BUILDDIR/cryptopp/lib
 ln -s lib $BUILDDIR/cryptopp/lib64
 make -j$(nproc)

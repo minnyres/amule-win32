@@ -5,7 +5,7 @@ set -e
 cd src
 tar -xf gettext-0.21.tar.xz
 cd gettext-0.21
-./configure CFLAGS="-g0 -O3" CPPFLAGS="-I$BUILDDIR/libiconv/include"  LDFLAGS="-L$BUILDDIR/libiconv/lib" \
+./configure CPPFLAGS="-I$BUILDDIR/libiconv/include"  LDFLAGS="-L$BUILDDIR/libiconv/lib" \
     --host=$TARGET --prefix=$BUILDDIR/gettext --with-libiconv-prefix=$BUILDDIR/libiconv \
     --enable-shared=no --enable-static=yes --enable-threads=posix
 mkdir -p $BUILDDIR/gettext/lib
