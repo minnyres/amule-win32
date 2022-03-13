@@ -2,31 +2,49 @@
 
 set -e
 
-export TARGET=i686-w64-mingw32
-export BUILDDIR=$PWD/toolchain/mingw32
+if [ $# == 1 ]
+then
+    if [ $1 == "-arch=x86" ]
+    then
+        export arch=x86
+    elif [ $1 == "-arch=x64" ]
+    then
+        export arch=x64
+    else 
+        echo "Usage: ./scripts/gcc-mingw.sh -arch=x86 or x64"
+    fi 
+else
+    echo "Usage: ./scripts/gcc-mingw.sh -arch=x86 or x64"
+fi
+
+if [ $arch == "x86" ]
+then 
+    export TARGET=i686-w64-mingw32
+    export BUILDDIR=$PWD/toolchain/mingw32
+    export mingw_lib32=yes
+    export mingw_lib64=no
+else 
+    export TARGET=x86_64-w64-mingw32
+    export BUILDDIR=$PWD/toolchain/mingw64
+    export mingw_lib32=no
+    export mingw_lib64=yes
+fi
+
 export GCC_VERSION=11.2.0
 export MINGW_VERSION=9.0.0
-export BINUTILS_VERSION=2.37
-export MPFR_VERSION=4.1.0
-export MPC_VERSION=1.2.1
-export GMP_VERSION=6.2.1
-export ISL_VERSION=0.24
+export BINUTILS_VERSION=2.38
 
 mkdir $BUILDDIR/tmp -p
 cd $BUILDDIR/tmp
 wget http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.xz
 wget http://ftp.gnu.org/gnu/binutils/binutils-$BINUTILS_VERSION.tar.xz
-wget http://ftp.gnu.org/gnu/gmp/gmp-$GMP_VERSION.tar.xz
-wget http://ftp.gnu.org/gnu/mpfr/mpfr-$MPFR_VERSION.tar.xz
-wget http://ftp.gnu.org/gnu/mpc/mpc-$MPC_VERSION.tar.gz
-wget https://gcc.gnu.org/pub/gcc/infrastructure/isl-$ISL_VERSION.tar.bz2
 wget https://jaist.dl.sourceforge.net/project/mingw-w64/mingw-w64/mingw-w64-release/mingw-w64-v$MINGW_VERSION.tar.bz2
 
 # binutils
 cd $BUILDDIR/tmp
 tar -xf binutils-$BINUTILS_VERSION.tar.xz
 cd binutils-$BINUTILS_VERSION
-./configure --prefix=$BUILDDIR --target=$TARGET --with-sysroot=$BUILDDIR --disable-multilib 
+./configure CFLAGS="-O3" LDFLAGS="-s" --prefix=$BUILDDIR --target=$TARGET --with-sysroot=$BUILDDIR --disable-multilib 
 make -j$(nproc) && make install
 
 # mingw-w64 headers
@@ -40,18 +58,17 @@ make all && make install
 cd $BUILDDIR/tmp
 tar -xf gcc-$GCC_VERSION.tar.xz
 cd gcc-$GCC_VERSION
-tar -xf ../mpfr-$MPFR_VERSION.tar.xz
-mv -v mpfr-$MPFR_VERSION mpfr
-tar -xf ../gmp-$GMP_VERSION.tar.xz
-mv -v gmp-$GMP_VERSION gmp
-tar -xf ../mpc-$MPC_VERSION.tar.gz
-mv -v mpc-$MPC_VERSION mpc
-tar -xf ../isl-$ISL_VERSION.tar.bz2
-mv -v isl-$ISL_VERSION isl
+./contrib/download_prerequisites
 
 mkdir build
 cd build
-../configure --prefix=$BUILDDIR --target=$TARGET --with-sysroot=$BUILDDIR --disable-multilib  --disable-shared --enable-languages=c,c++ --enable-threads=posix --disable-win32-registry --enable-version-specific-runtime-libs --enable-fully-dynamic-string --enable-libgomp --enable-libssp --enable-lto 
+../configure CFLAGS="-g0 -O3" CXXFLAGS="-g0 -O3" CFLAGS_FOR_TARGET="-g0 -O3" \
+    CXXFLAGS_FOR_TARGET="-g0 -O3" BOOT_CFLAGS="-g0 -O3" BOOT_CXXFLAGS="-g0 -O3" \
+    --prefix=$BUILDDIR --target=$TARGET --with-sysroot=$BUILDDIR \
+    --disable-multilib  --disable-shared --enable-languages=c,c++ \
+    --enable-threads=posix --disable-win32-registry --enable-version-specific-runtime-libs \
+    --enable-fully-dynamic-string --enable-libgomp --enable-libssp --enable-lto \
+    --disable-libstdcxx-pch  --disable-libstdcxx-verbose 
 
 ln -s $TARGET $BUILDDIR/mingw
 
@@ -60,13 +77,15 @@ make -j$(nproc) all-gcc && make install-gcc
 export PATH=$BUILDDIR/bin:$PATH
 
 # mingw-w64 crt
+mkdir -p $BUILDDIR/$TARGET/lib
+ln -s lib $BUILDDIR/$TARGET/lib64
 cd $BUILDDIR/tmp/mingw-w64-v$MINGW_VERSION/mingw-w64-crt/
-./configure --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-lib64=no --enable-lib32 --with-default-msvcrt=msvcrt --with-default-win32-winnt=0x0600
+./configure CFLAGS="-s -O3" --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-lib64=$mingw_lib64 --enable-lib32=$mingw_lib32 --with-default-msvcrt=msvcrt --with-default-win32-winnt=0x0600
 make -j$(nproc) && make install
 
 # winpthreads
 cd $BUILDDIR/tmp/mingw-w64-v$MINGW_VERSION/mingw-w64-libraries/winpthreads/
-./configure --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-shared=no --enable-static
+./configure CFLAGS="-s -O3" --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-shared=no --enable-static
 make -j$(nproc) && make install
 
 # gcc libs
