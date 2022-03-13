@@ -25,14 +25,14 @@ Checkout the repository
 
     git clone https://github.com/minnyres/amule-win32.git
     cd amule-win32
-    
-Download the source code
-
-    ./scripts/download.sh
 
 Build the Mingw-w64 cross toolchain:
 
-    ./scripts/mingw32.sh
+    ./scripts/gcc-mingw.sh -arch=x86
+    
+Download the source code of aMule and third party libraries
+
+    ./scripts/download.sh
 
 Build aMule 
 
