@@ -4,7 +4,7 @@ set -e
 
 if [ "$USE_LLVM" == "yes" ]
 then
-    export RC=$PWD/scripts/llvm-windres.sh
+    RC=$PWD/scripts/llvm-windres.sh
 fi
 
 # amule-dlp
@@ -44,7 +44,7 @@ rm -rf amule-dlp-master
 7z x amule-dlp.antiLeech-master.zip
 cd amule-dlp.antiLeech-master
 patch -p1 < ../../patches/amule-fix-libantiLeech.patch
-export PATH=$BUILDDIR/wxwidgets/bin:$PATH
+PATH=$BUILDDIR/wxwidgets/bin:$PATH
 $TARGET-g++ -O2 -s -static -fPIC -shared antiLeech.cpp antiLeech_wx.cpp Interface.cpp -o antileech.dll $(wx-config --cppflags) $(wx-config --libs)
 mv antileech.dll $BUILDDIR/amule-dlp/bin
 cd ..

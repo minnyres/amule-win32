@@ -4,7 +4,7 @@ set -e
 
 if [ "$USE_LLVM" == "yes" ]
 then
-    export RC=$PWD/scripts/llvm-windres.sh
+    RC=$PWD/scripts/llvm-windres.sh
 fi
 
 cd src

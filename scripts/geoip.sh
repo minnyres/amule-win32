@@ -2,8 +2,8 @@
 
 set -e
 
-export CXXFLAGS="-s -O3"
-export CFLAGS="-s -O3"
+CXXFLAGS="-s -O3"
+CFLAGS="-s -O3"
 
 cd src/geoip-api-c
 ./bootstrap
