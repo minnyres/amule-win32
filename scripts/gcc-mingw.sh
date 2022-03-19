@@ -2,16 +2,16 @@
 
 set -e
 
-export help_msg="Usage: ./scripts/gcc-mingw.sh -arch=[x86/x64]"
+help_msg="Usage: ./scripts/gcc-mingw.sh -arch=[x86/x64]"
 
 if [ $# == 1 ]
 then
     if [ $1 == "-arch=x86" ]
     then
-        export arch=x86
+        arch=x86
     elif [ $1 == "-arch=x64" ]
     then
-        export arch=x64
+        arch=x64
     else 
         echo $help_msg
         exit -1
@@ -23,20 +23,20 @@ fi
 
 if [ $arch == "x86" ]
 then 
-    export TARGET=i686-w64-mingw32
-    export BUILDDIR=$PWD/toolchain/mingw32
-    export mingw_lib32=yes
-    export mingw_lib64=no
+    TARGET=i686-w64-mingw32
+    BUILDDIR=$PWD/toolchain/mingw32
+    mingw_lib32=yes
+    mingw_lib64=no
 else 
-    export TARGET=x86_64-w64-mingw32
-    export BUILDDIR=$PWD/toolchain/mingw64
-    export mingw_lib32=no
-    export mingw_lib64=yes
+    TARGET=x86_64-w64-mingw32
+    BUILDDIR=$PWD/toolchain/mingw64
+    mingw_lib32=no
+    mingw_lib64=yes
 fi
 
-export GCC_VERSION=11.2.0
-export MINGW_VERSION=9.0.0
-export BINUTILS_VERSION=2.38
+GCC_VERSION=11.2.0
+MINGW_VERSION=9.0.0
+BINUTILS_VERSION=2.38
 
 mkdir $BUILDDIR/tmp -p
 cd $BUILDDIR/tmp
@@ -78,7 +78,7 @@ ln -s $TARGET $BUILDDIR/mingw
 
 make -j$(nproc) all-gcc && make install-gcc
 
-export PATH=$BUILDDIR/bin:$PATH
+PATH=$BUILDDIR/bin:$PATH
 
 # mingw-w64 crt
 mkdir -p $BUILDDIR/$TARGET/lib
