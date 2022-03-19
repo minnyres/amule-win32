@@ -2,6 +2,8 @@
 
 set -e
 
+export help_msg="Usage: ./scripts/gcc-mingw.sh -arch=[x86/x64]"
+
 if [ $# == 1 ]
 then
     if [ $1 == "-arch=x86" ]
@@ -11,10 +13,12 @@ then
     then
         export arch=x64
     else 
-        echo "Usage: ./scripts/gcc-mingw.sh -arch=x86 or x64"
+        echo $help_msg
+        exit -1
     fi 
 else
-    echo "Usage: ./scripts/gcc-mingw.sh -arch=x86 or x64"
+    echo $help_msg
+    exit -1
 fi
 
 if [ $arch == "x86" ]
