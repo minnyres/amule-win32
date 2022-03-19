@@ -2,9 +2,6 @@
 
 set -e
 
-export CXXFLAGS="-s -O2"
-export CFLAGS="-s -O2"
-
 cd src
 tar -xf libiconv-1.16.tar.gz
 cd libiconv-1.16

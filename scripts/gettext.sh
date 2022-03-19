@@ -2,9 +2,6 @@
 
 set -e
 
-export CXXFLAGS="-s -O2"
-export CFLAGS="-s -O2"
-
 cd src
 tar -xf gettext-0.21.tar.xz
 cd gettext-0.21

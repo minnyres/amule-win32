@@ -4,7 +4,7 @@ set -e
 
 if [ "$USE_LLVM" == "yes" ]
 then
-    export RC=$PWD/toolchain/mingw32/bin/i686-w64-mingw32-windres
+    export RC=$PWD/scripts/llvm-windres.sh
 fi
 
 cd src
