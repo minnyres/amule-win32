@@ -2,16 +2,59 @@
 
 set -e
 
-export TARGET=i686-w64-mingw32
-export BUILDDIR=$PWD/build-win32
-export USE_LLVM=no
+help_msg="Usage: ./scripts/build-all.sh -arch=[x86/arm32] -cc=[gcc/clang]"
+
+if [ $# == 2 ]
+then
+    for option in "$@"; do
+        if [ $option == "-arch=x86" ]
+        then 
+            ARCH=x86 
+        elif [ $option == "-arch=arm32" ]
+        then
+            ARCH=arm32
+        elif [ $option == "-cc=gcc" ]
+        then
+            USE_LLVM=no
+        elif [ $option == "-cc=clang" ]
+        then
+            USE_LLVM=yes
+        else
+            echo $help_msg
+            exit -1
+        fi
+    done
+else
+    echo $help_msg
+    exit -1
+fi
+
 
 if [ "$USE_LLVM" == "yes" ]
 then
-    export PATH=$PWD/toolchain/clang/bin/:$PATH
+    PATH=$PWD/toolchain/clang/bin/:$PATH
 else
-    export PATH=$PWD/toolchain/mingw32/bin/:$PATH
+    PATH=$PWD/toolchain/mingw32/bin/:$PATH
 fi
+
+if [ "$ARCH" == "x86" ]
+then
+    TARGET=i686-w64-mingw32
+    BUILDDIR=$PWD/build-x86
+elif [ "$ARCH" == "arm32" ]
+then
+    TARGET=armv7-w64-mingw32
+    BUILDDIR=$PWD/build-arm32
+fi
+
+[[ $(type -P "$TARGET-g++") ]] &&  echo "Using compiler $TARGET-g++"  || 
+    { echo "$TARGET-g++ is not found or executable!" ; exit -2; }
+
+export PATH
+export TARGET
+export BUILDDIR
+export USE_LLVM
+export ARCH
 
 ./scripts/zlib.sh
 ./scripts/cryptopp-autotools.sh
