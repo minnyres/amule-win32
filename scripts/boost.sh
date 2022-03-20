@@ -10,7 +10,7 @@ cd tools/build/
 ./bootstrap.sh
 ./b2 install --prefix=$BUILDDIR/boost.build
 
-PATH=$PATH:$BUILDDIR/boost.build/bin
+export PATH=$PATH:$BUILDDIR/boost.build/bin
 cd ../../
 echo "using gcc : mingw : $TARGET-g++ ;"  > user-config.jam
 b2 --user-config=./user-config.jam --with-system --build-dir=$PWD/build-boost --prefix=$BUILDDIR/boost \
