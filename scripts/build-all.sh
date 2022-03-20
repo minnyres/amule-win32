@@ -57,13 +57,13 @@ export USE_LLVM
 export ARCH
 
 ./scripts/zlib.sh
-./scripts/cryptopp-autotools.sh
-./scripts/libiconv.sh 
-./scripts/gettext.sh
-./scripts/boost.sh
-./scripts/wxwidgets.sh
-./scripts/geoip.sh
 ./scripts/libpng.sh 
+./scripts/libiconv.sh 
+./scripts/geoip.sh
 ./scripts/libupnp.sh 
+./scripts/gettext.sh
+./scripts/cryptopp-autotools.sh
+./scripts/wxwidgets.sh
+./scripts/boost.sh
 ./scripts/amule-2.3.3.sh
 ./scripts/amule-dlp.sh 
