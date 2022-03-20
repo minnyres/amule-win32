@@ -20,8 +20,25 @@ With GeoIP aMule shows the country flags of peers. To enable GeoIP, you need to 
 
 ### Prerequisite
 
-The scripts build aMule for Windows by cross compiling with Mingw-w64 GCC/LLVM on GNU/Linux. To compile from source yourself, you need to work on a GNU/Linux system, with these packages installed:
-> g++, autoconf, automake, make, patch, bison, flex, pkg-config, libtool, git, wget, gettext, makeinfo, p7zip-full 
+The scripts build aMule for Windows by cross compiling with Mingw-w64 GCC/LLVM on GNU/Linux. To compile from source yourself, you need to work on a GNU/Linux system and install the following packages:
+
++ [GCC](https://gcc.gnu.org/)
++ [GNU Autotools](https://www.gnu.org/software/automake/faq/autotools-faq.html)
++ [GNU make](https://www.gnu.org/software/make/)
++ [wget](https://www.gnu.org/software/wget/) and [git](https://git-scm.com/)
++ [GNU patch](https://savannah.gnu.org/projects/patch/)
++ [bison](https://www.gnu.org/software/bison/) and [flex](https://github.com/westes/flex)
++ [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config)
++ [libtool](https://www.gnu.org/software/libtool/)
++ [texinfo](https://www.gnu.org/software/texinfo/)
++ [gettext](https://www.gnu.org/software/gettext/)
++ [7zip](https://www.7-zip.org/)
+
+These packages can be installed on openSUSE tumbleweed via zypper
+
+    sudo zypper install gcc-c++ autoconf automake make patch bison flex libtool git wget gettext-runtime makeinfo 7zip pkgconf-pkg-config
+
+The package name may be different for other distributions.
 
 ### Download
 
@@ -38,17 +55,19 @@ Download the source code of aMule and third party libraries
 
 You can build either GCC or LLVM toolchain for cross compiling. Note that currently GCC does not support Windows on ARM.
 
-Build Mingw-w64 GCC with
+Build Mingw-w64 GCC
 
     ./scripts/gcc-mingw.sh -arch=x86
     
-Build Mingw-w64 LLVM with
+Build Mingw-w64 LLVM
 
     ./scripts/llvm-mingw.sh -crt=[ucrt/msvcrt]
     
 Here, the option `-crt` specifies the C standard library for the toolchain. The toolchain uses UCRT with `-crt=ucrt`, and uses MSVCRT with `-crt=msvcrt`. The [MSYS2 document](https://www.msys2.org/docs/environments/) explains the differences between them.
 
 ### Build aMule 
+
+Aftering building the cross toolchain, aMule can be built with
 
     ./scripts/build-all.sh -arch=[x86/arm32] -cc=[gcc/clang]
     
