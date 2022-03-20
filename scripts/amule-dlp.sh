@@ -4,9 +4,7 @@ set -e
 
 if [ "$USE_LLVM" == "yes" ]
 then
-    rc=$PWD/scripts/llvm-windres.sh
-else
-    rc=$TARGET-windres
+    RC=$PWD/scripts/llvm-windres.sh
 fi
 
 # amule-dlp
@@ -37,7 +35,7 @@ patch -p1 < ../../patches/amule-fix-boost_llvm.patch
     --enable-static-boost --with-boost=$BUILDDIR/boost \
     --with-libupnp-prefix=$BUILDDIR/libupnp --with-denoise-level=0 
 
-make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lws2_32" BOOST_SYSTEM_LDFLAGS="-L$BUILDDIR/boost/lib" RC=$rc -j$(nproc)
+make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lws2_32" BOOST_SYSTEM_LDFLAGS="-L$BUILDDIR/boost/lib" -j$(nproc)
 make install
 cd ..
 rm -rf amule-dlp-master
