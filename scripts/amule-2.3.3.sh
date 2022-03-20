@@ -4,7 +4,9 @@ set -e
 
 if [ "$USE_LLVM" == "yes" ]
 then
-    RC=$PWD/scripts/llvm-windres.sh
+    rc=$PWD/scripts/llvm-windres.sh
+else
+    rc=$TARGET-windres
 fi
 
 cd src
@@ -33,7 +35,7 @@ patch -p1 < ../../patches/amule-fix-boost_llvm.patch
     --enable-static-boost --with-boost=$BUILDDIR/boost \
     --with-libupnp-prefix=$BUILDDIR/libupnp --with-denoise-level=0 
 
-make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lws2_32" BOOST_SYSTEM_LDFLAGS="-L$BUILDDIR/boost/lib" -j$(nproc)
+make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lws2_32" BOOST_SYSTEM_LDFLAGS="-L$BUILDDIR/boost/lib" RC=$rc -j$(nproc)
 make install
 
 cd ..
