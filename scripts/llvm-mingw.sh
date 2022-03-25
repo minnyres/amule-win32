@@ -21,7 +21,7 @@ else
     exit -1
 fi
 
-git clone --depth 1 --branch 20211002  https://github.com/mstorsjo/llvm-mingw.git
+git clone --depth 1 --branch 20220323  https://github.com/mstorsjo/llvm-mingw.git
 cd llvm-mingw
 
 sed  -i "s/DEFAULT_MSVCRT:=ucrt/DEFAULT_MSVCRT:=$CRT/"  build-mingw-w64.sh
