@@ -77,4 +77,4 @@ Here, option `-arch` specifies the CPU architecture and `-cc` specifies the tool
 + build for Windows x86 with LLVM: `-arch=x86 -cc=clang`
 + build for Windows ARM32 with LLVM: `-arch=arm32 -cc=clang`
 
-The build package is archived in the 7-Zip file `amule-<version>-windows-<arch>.7z`.
+The build package is archived in the 7-Zip file `amule-xxx-yyy.7z`.
