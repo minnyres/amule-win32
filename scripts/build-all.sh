@@ -61,7 +61,12 @@ export ARCH
 ./scripts/libiconv.sh 
 ./scripts/geoip.sh
 ./scripts/libupnp.sh 
-./scripts/gettext.sh
+
+if [ "$USE_LLVM" == "no" ]
+then
+    ./scripts/gettext.sh
+fi
+
 ./scripts/cryptopp-autotools.sh
 ./scripts/wxwidgets.sh
 ./scripts/boost.sh
