@@ -9,10 +9,10 @@ then
     for option in "$@"; do
         if [ $option == "-arch=x86" ]
         then 
-            ARCH=win32
+            ARCH=x86
         elif [ $option == "-arch=arm32" ]
         then
-            ARCH=woa32
+            ARCH=arm32
         elif [ $option == "-cc=gcc" ]
         then
             USE_LLVM=no
@@ -37,15 +37,15 @@ else
     PATH=$PWD/toolchain/mingw32/bin/:$PATH
 fi
 
-if [ "$ARCH" == "win32" ]
+if [ "$ARCH" == "x86" ]
 then
     TARGET=i686-w64-mingw32
-    BUILDDIR=$PWD/build-x86
-elif [ "$ARCH" == "woa32" ]
+elif [ "$ARCH" == "arm32" ]
 then
     TARGET=armv7-w64-mingw32
-    BUILDDIR=$PWD/build-arm32
 fi
+
+BUILDDIR=$PWD/build-$ARCH
 
 [[ $(type -P "$TARGET-g++") ]] &&  echo "Using compiler $TARGET-g++"  || 
     { echo "$TARGET-g++ is not found or executable!" ; exit -2; }

@@ -51,5 +51,5 @@ cp -r $BUILDDIR/amule/share/locale/ amule
 cp -r $BUILDDIR/amule/share/amule/* amule
 mkdir amule/docs
 cp $BUILDDIR/amule/share/doc/amule/* amule/docs
-7z a -mx9 amule-2.3.3-$ARCH.7z amule
+7z a -mx9 amule-2.3.3-windows-$ARCH.7z amule
 rm -rf amule
