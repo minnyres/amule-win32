@@ -9,10 +9,10 @@ then
     for option in "$@"; do
         if [ $option == "-arch=x86" ]
         then 
-            ARCH=x86
+            ARCH=win32
         elif [ $option == "-arch=arm32" ]
         then
-            ARCH=arm32
+            ARCH=win32-arm
         elif [ $option == "-cc=gcc" ]
         then
             USE_LLVM=no
@@ -37,10 +37,10 @@ else
     PATH=$PWD/toolchain/mingw32/bin/:$PATH
 fi
 
-if [ "$ARCH" == "x86" ]
+if [ "$ARCH" == "win32" ]
 then
     TARGET=i686-w64-mingw32
-elif [ "$ARCH" == "arm32" ]
+elif [ "$ARCH" == "win32-arm" ]
 then
     TARGET=armv7-w64-mingw32
 fi

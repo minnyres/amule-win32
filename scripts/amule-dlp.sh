@@ -63,5 +63,5 @@ cp -r $BUILDDIR/amule-dlp/share/locale/ amule-dlp
 cp -r $BUILDDIR/amule-dlp/share/amule-dlp/* amule-dlp
 mkdir amule-dlp/docs
 cp $BUILDDIR/amule-dlp/share/doc/amule-dlp/* amule-dlp/docs
-7z a -mx9 amule-dlp-$(printf '%(%Y-%m-%d)T\n' -1)-windows-$ARCH.7z amule-dlp
+7z a -mx9 amule-dlp-$(printf '%(%Y-%m-%d)T\n' -1)-$ARCH.7z amule-dlp
 rm -rf amule-dlp

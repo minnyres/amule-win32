@@ -18,7 +18,7 @@ rm -rf wxWidgets-3.0.5
 
 WX_INCLUDE=$BUILDDIR/wxwidgets/include/wx-3.0/wx/msw
 
-if [ "$ARCH" == "arm32" ]
+if [ "$ARCH" == "win32-arm" ]
 then
     cp $WX_INCLUDE/amd64.manifest $WX_INCLUDE/arm.manifest
     sed -i 's/amd64/arm/g'  $WX_INCLUDE/arm.manifest
