@@ -5,7 +5,7 @@ set -e
 mkdir -p $PWD/src
 cd $PWD/src
 
-wget http://www.zlib.net/zlib-1.2.11.tar.gz
+wget http://zlib.net/zlib-1.2.12.tar.gz
 wget http://cryptopp.com/cryptopp860.zip
 wget https://github.com/noloader/cryptopp-autotools/archive/refs/tags/CRYPTOPP_8_6_0.tar.gz -O cryptopp-autotools-CRYPTOPP_8_6_0.tar.gz
 wget http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.16.tar.gz
