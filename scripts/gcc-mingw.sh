@@ -81,7 +81,8 @@ mkdir -p $BUILDDIR/$TARGET/lib
 ln -s lib $BUILDDIR/$TARGET/lib64
 cd $BUILDDIR/tmp/mingw-w64-v$MINGW_VERSION/mingw-w64-crt/
 ./configure CFLAGS="-s -O3" --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-lib64=$mingw_lib64 --enable-lib32=$mingw_lib32 --with-default-msvcrt=msvcrt --with-default-win32-winnt=0x0600
-make -j$(nproc) && make install
+make 
+make install
 
 # winpthreads
 cd $BUILDDIR/tmp/mingw-w64-v$MINGW_VERSION/mingw-w64-libraries/winpthreads/
