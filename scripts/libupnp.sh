@@ -10,6 +10,6 @@ mkdir -p $BUILDDIR/libupnp/lib
 ln -s lib $BUILDDIR/libupnp/lib64
 make -j$(nproc)
 make install
-sed -i 's/-lupnp -lixml/& -liphlpapi -lws2_32 /g'  $BUILDDIR/libupnp/lib/pkgconfig/libupnp.pc
+sed -i 's/-lupnp -lixml/& -liphlpapi -lws2_32 /g' $BUILDDIR/libupnp/lib/pkgconfig/libupnp.pc
 cd ..
 rm -rf libupnp-1.14.12

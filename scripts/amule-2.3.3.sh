@@ -2,8 +2,7 @@
 
 set -e
 
-if [ "$USE_LLVM" == "yes" ]
-then
+if [ "$USE_LLVM" == "yes" ]; then
     export RC=$PWD/scripts/llvm-windres.sh
     denoise_level=0
 else
@@ -14,15 +13,15 @@ cd src
 tar -xf aMule-2.3.3.tar.xz
 cd aMule-2.3.3
 
-patch -p0 < ../../patches/amule-fix-upnp_cross_compile.patch
-patch -p0 < ../../patches/amule-fix-wchar_t.patch
-patch -p0 < ../../patches/amule-fix-exception.patch
-patch -p1 < ../../patches/amule-fix-unzip.patch
-patch -p1 < ../../patches/amule-fix-boost_llvm.patch
+patch -p0 <../../patches/amule-fix-upnp_cross_compile.patch
+patch -p0 <../../patches/amule-fix-wchar_t.patch
+patch -p0 <../../patches/amule-fix-exception.patch
+patch -p1 <../../patches/amule-fix-unzip.patch
+patch -p1 <../../patches/amule-fix-boost_llvm.patch
 
 ./autogen.sh
 ./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include" \
-    LDFLAGS="-L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib"  \
+    LDFLAGS="-L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib" \
     --prefix=$BUILDDIR/amule --host=$TARGET \
     --enable-amule-daemon --enable-webserver --enable-amulecmd --enable-amule-gui \
     --enable-cas --enable-wxcas --enable-alc --enable-alcc --enable-fileview \

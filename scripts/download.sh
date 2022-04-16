@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-set -e 
+set -e
 
 mkdir -p $PWD/src
 cd $PWD/src

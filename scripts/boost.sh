@@ -12,7 +12,7 @@ cd tools/build/
 
 PATH=$PATH:$BUILDDIR/boost.build/bin
 cd ../../
-echo "using gcc : mingw : $TARGET-g++ ;"  > user-config.jam
+echo "using gcc : mingw : $TARGET-g++ ;" >user-config.jam
 b2 --user-config=./user-config.jam --with-system --build-dir=$PWD/build-boost --prefix=$BUILDDIR/boost \
     link=static runtime-link=static toolset=gcc-mingw target-os=windows \
     variant=release threading=multi address-model=32 install || true

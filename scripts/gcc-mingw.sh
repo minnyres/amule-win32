@@ -4,30 +4,26 @@ set -e
 
 help_msg="Usage: ./scripts/gcc-mingw.sh -arch=[x86/x64]"
 
-if [ $# == 1 ]
-then
-    if [ $1 == "-arch=x86" ]
-    then
+if [ $# == 1 ]; then
+    if [ $1 == "-arch=x86" ]; then
         arch=x86
-    elif [ $1 == "-arch=x64" ]
-    then
+    elif [ $1 == "-arch=x64" ]; then
         arch=x64
-    else 
+    else
         echo $help_msg
         exit -1
-    fi 
+    fi
 else
     echo $help_msg
     exit -1
 fi
 
-if [ $arch == "x86" ]
-then 
+if [ $arch == "x86" ]; then
     TARGET=i686-w64-mingw32
     BUILDDIR=$PWD/toolchain/mingw32
     mingw_lib32=yes
     mingw_lib64=no
-else 
+else
     TARGET=x86_64-w64-mingw32
     BUILDDIR=$PWD/toolchain/mingw64
     mingw_lib32=no
@@ -48,7 +44,7 @@ wget https://jaist.dl.sourceforge.net/project/mingw-w64/mingw-w64/mingw-w64-rele
 cd $BUILDDIR/tmp
 tar -xf binutils-$BINUTILS_VERSION.tar.xz
 cd binutils-$BINUTILS_VERSION
-./configure CFLAGS="-O3" LDFLAGS="-s" --prefix=$BUILDDIR --target=$TARGET --with-sysroot=$BUILDDIR --disable-multilib 
+./configure CFLAGS="-O3" LDFLAGS="-s" --prefix=$BUILDDIR --target=$TARGET --with-sysroot=$BUILDDIR --disable-multilib
 make -j$(nproc) && make install
 
 # mingw-w64 headers
@@ -69,10 +65,10 @@ cd build
 ../configure CFLAGS="-g0 -O3" CXXFLAGS="-g0 -O3" CFLAGS_FOR_TARGET="-g0 -O3" \
     CXXFLAGS_FOR_TARGET="-g0 -O3" BOOT_CFLAGS="-g0 -O3" BOOT_CXXFLAGS="-g0 -O3" \
     --prefix=$BUILDDIR --target=$TARGET --with-sysroot=$BUILDDIR \
-    --disable-multilib  --disable-shared --enable-languages=c,c++ \
+    --disable-multilib --disable-shared --enable-languages=c,c++ \
     --enable-threads=posix --disable-win32-registry --enable-version-specific-runtime-libs \
     --enable-fully-dynamic-string --enable-libgomp --enable-libssp --enable-lto \
-    --disable-libstdcxx-pch  --disable-libstdcxx-verbose 
+    --disable-libstdcxx-pch --disable-libstdcxx-verbose
 
 ln -s $TARGET $BUILDDIR/mingw
 
@@ -103,6 +99,6 @@ rm $BUILDDIR/mingw
 
 # strip
 cd $BUILDDIR/
-find -executable -type f -exec strip -s {} ";" >& /dev/null
-find . -name "*.a" -type f -exec $TARGET-strip -d {} ";" >& /dev/null
-find . -name "*.o" -type f -exec $TARGET-strip -d {} ";" >& /dev/null
+find -executable -type f -exec strip -s {} ";" >&/dev/null
+find . -name "*.a" -type f -exec $TARGET-strip -d {} ";" >&/dev/null
+find . -name "*.o" -type f -exec $TARGET-strip -d {} ";" >&/dev/null
