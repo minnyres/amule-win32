@@ -68,4 +68,4 @@ Build for Windows ARM32 with LLVM:
 
     ./scripts/build-all.sh -arch=arm32 -cc=clang
 
-This script will build the third party libraries, official [aMule](https://github.com/amule-project/amule) and [amule-dlp](https://github.com/persmule/amule-dlp). The build package for official [aMule](https://github.com/amule-project/amule) is archived in `amule-<version>-<arch>.7z`, while the build package for [amule-dlp](https://github.com/persmule/amule-dlp) is archived in `amule-dlp-<data>-<arch>.7z`.
+This script will build the third party libraries, official [aMule](https://github.com/amule-project/amule) and [amule-dlp](https://github.com/persmule/amule-dlp). The build package for official [aMule](https://github.com/amule-project/amule) is archived in `amule-<version>-<arch>.7z`, while the build package for [amule-dlp](https://github.com/persmule/amule-dlp) is archived in `amule-dlp-<date>-<arch>.7z`.
