@@ -2,7 +2,7 @@
 
 set -e
 
-help_msg="Usage: ./scripts/gcc-mingw.sh -arch=[x86/x64]"
+help_msg="Usage: ./scripts/gcc-mingw.sh -arch=[x86|x64]"
 
 if [ $# == 1 ]; then
     if [ $1 == "-arch=x86" ]; then

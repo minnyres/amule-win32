@@ -2,7 +2,7 @@
 
 set -e
 
-help_msg="Usage: ./scripts/llvm-mingw.sh -crt=[ucrt/msvcrt]"
+help_msg="Usage: ./scripts/llvm-mingw.sh -crt=[ucrt|msvcrt]"
 
 if [ $# == 1 ]; then
     if [ $1 == "-crt=ucrt" ]; then

@@ -1,10 +1,10 @@
 # amule-win32
 
-[aMule](https://github.com/amule-project/amule) is an eMule-like client for the eDonkey and Kademlia networks. This repository distributes my personal [aMule](https://github.com/amule-project/amule) build for Windows.
+[aMule](https://github.com/amule-project/amule) is an eMule-like client for the eDonkey and Kademlia networks. This repository distributes my personal [aMule](https://github.com/amule-project/amule) build for Windows. In addition to official [aMule](https://github.com/amule-project/amule), we also build the community fork [amule-dlp](https://github.com/persmule/amule-dlp) which supports dynamic leech protection (DLP).
 
-## Install
+## Download
 
-Download the binary files at the [releases](https://github.com/minnyres/amule-win32/releases/) page. There is no need to install. Just extract and use it. 
+You can download the binary files at the [releases](https://github.com/minnyres/amule-win32/releases/latest) page. 
 
 ## Usage
 
@@ -20,25 +20,15 @@ With GeoIP aMule shows the country flags of peers. To enable GeoIP, you need to 
 
 ### Prerequisite
 
-The scripts build aMule for Windows by cross compiling with Mingw-w64 GCC/LLVM on GNU/Linux. To compile from source yourself, you need to work on a GNU/Linux system and install the following packages:
+The scripts build aMule for Windows by cross compiling with Mingw-w64 GCC/LLVM on GNU/Linux. To compile from source yourself, you need to work on a GNU/Linux system and install necessary packages. 
 
-+ [GCC](https://gcc.gnu.org/)
-+ [GNU Autotools](https://www.gnu.org/software/automake/faq/autotools-faq.html)
-+ [GNU make](https://www.gnu.org/software/make/)
-+ [wget](https://www.gnu.org/software/wget/) and [git](https://git-scm.com/)
-+ [GNU patch](https://savannah.gnu.org/projects/patch/)
-+ [bison](https://www.gnu.org/software/bison/) and [flex](https://github.com/westes/flex)
-+ [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config)
-+ [libtool](https://www.gnu.org/software/libtool/)
-+ [texinfo](https://www.gnu.org/software/texinfo/)
-+ [gettext](https://www.gnu.org/software/gettext/)
-+ [7zip](https://www.7-zip.org/)
-
-These packages can be installed on openSUSE tumbleweed via zypper
+For openSUSE tumbleweed, install via `zypper`
 
     sudo zypper install gcc-c++ autoconf automake make patch bison flex libtool git wget gettext-runtime makeinfo 7zip pkgconf-pkg-config
 
-The package name may be different for other distributions.
+For Debian, install via `apt`
+
+    sudo apt install g++ autoconf automake make patch bison flex libtool git wget gettext texinfo p7zip-full pkg-config
 
 ### Download
 
@@ -53,7 +43,7 @@ Download the source code of aMule and third party libraries
     
 ### Build the cross toolchain
 
-You can build either GCC or LLVM toolchain for cross compiling. Note that currently GCC does not support Windows on ARM.
+You can build either GCC or LLVM toolchain for cross compiling. To build aMule for Windows on ARM (WoA), you should choose LLVM since currently GCC does not support WoA.
 
 Build Mingw-w64 GCC
 
@@ -61,20 +51,21 @@ Build Mingw-w64 GCC
     
 Build Mingw-w64 LLVM
 
-    ./scripts/llvm-mingw.sh -crt=[ucrt/msvcrt]
+    ./scripts/llvm-mingw.sh -crt=ucrt
     
-Here, the option `-crt` specifies the C standard library for the toolchain. The toolchain uses UCRT with `-crt=ucrt`, and uses MSVCRT with `-crt=msvcrt`. The [MSYS2 document](https://www.msys2.org/docs/environments/) explains the differences between them.
 
 ### Build aMule 
 
-Aftering building the cross toolchain, aMule can be built with
+Build for Windows x86 with GCC: 
 
-    ./scripts/build-all.sh -arch=[x86/arm32] -cc=[gcc/clang]
-    
-Here, option `-arch` specifies the CPU architecture and `-cc` specifies the toolchain. The supported values of the options include:
+    ./scripts/build-all.sh -arch=x86 -cc=gcc
 
-+ build for Windows x86 with GCC: `-arch=x86 -cc=gcc`
-+ build for Windows x86 with LLVM: `-arch=x86 -cc=clang`
-+ build for Windows ARM32 with LLVM: `-arch=arm32 -cc=clang`
+Build for Windows x86 with LLVM: 
 
-The build package is archived in the 7-Zip file `amule-xxx-yyy.7z`.
+    ./scripts/build-all.sh -arch=x86 -cc=clang
+
+Build for Windows ARM32 with LLVM: 
+
+    ./scripts/build-all.sh -arch=arm32 -cc=clang
+
+This script will build the third party libraries, official [aMule](https://github.com/amule-project/amule) and [amule-dlp](https://github.com/persmule/amule-dlp). The build package for official [aMule](https://github.com/amule-project/amule) is archived in `amule-<version>-<arch>.7z`, while the build package for [amule-dlp](https://github.com/persmule/amule-dlp) is archived in `amule-dlp-<data>-<arch>.7z`.

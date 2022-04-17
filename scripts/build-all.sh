@@ -2,7 +2,7 @@
 
 set -e
 
-help_msg="Usage: ./scripts/build-all.sh -arch=[x86/arm32] -cc=[gcc/clang]"
+help_msg="Usage: ./scripts/build-all.sh -arch=[x86|arm32] -cc=[gcc|clang]"
 
 if [ $# == 2 ]; then
     for option in "$@"; do
