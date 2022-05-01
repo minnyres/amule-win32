@@ -36,23 +36,25 @@ BINUTILS_VERSION=2.38
 
 mkdir $BUILDDIR/tmp -p
 cd $BUILDDIR/tmp
-wget http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.xz
-wget http://ftp.gnu.org/gnu/binutils/binutils-$BINUTILS_VERSION.tar.xz
+wget https://ftpmirror.gnu.org/gnu/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.xz
+wget https://ftpmirror.gnu.org/gnu/binutils/binutils-$BINUTILS_VERSION.tar.xz
 wget https://jaist.dl.sourceforge.net/project/mingw-w64/mingw-w64/mingw-w64-release/mingw-w64-v$MINGW_VERSION.tar.bz2
 
 # binutils
 cd $BUILDDIR/tmp
 tar -xf binutils-$BINUTILS_VERSION.tar.xz
 cd binutils-$BINUTILS_VERSION
-./configure CFLAGS="-O3" LDFLAGS="-s" --prefix=$BUILDDIR --target=$TARGET --with-sysroot=$BUILDDIR --disable-multilib
-make -j$(nproc) && make install
+./configure CFLAGS="-g0 -Os" LDFLAGS="-s" --prefix=$BUILDDIR --target=$TARGET --with-sysroot=$BUILDDIR --disable-multilib
+make -j$(nproc)
+make install
 
 # mingw-w64 headers
 cd $BUILDDIR/tmp
 tar -xf mingw-w64-v$MINGW_VERSION.tar.bz2
 cd mingw-w64-v$MINGW_VERSION/mingw-w64-headers
 ./configure --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-sdk=all --enable-idl --enable-secure-api --with-default-msvcrt=msvcrt --with-default-win32-winnt=0x0600
-make all && make install
+make all
+make install
 
 # gcc-core
 cd $BUILDDIR/tmp
@@ -62,8 +64,9 @@ cd gcc-$GCC_VERSION
 
 mkdir build
 cd build
-../configure CFLAGS="-g0 -O3" CXXFLAGS="-g0 -O3" CFLAGS_FOR_TARGET="-g0 -O3" \
-    CXXFLAGS_FOR_TARGET="-g0 -O3" BOOT_CFLAGS="-g0 -O3" BOOT_CXXFLAGS="-g0 -O3" \
+../configure CFLAGS="-g0 -Os" CXXFLAGS="-g0 -Os" CFLAGS_FOR_TARGET="-g0 -Os" \
+    CXXFLAGS_FOR_TARGET="-g0 -Os" BOOT_CFLAGS="-g0 -Os" BOOT_CXXFLAGS="-g0 -Os" \
+    LDFLAGS="-s" LDFLAGS_FOR_TARGET="-s" BOOT_LDFLAGS="-s" \
     --prefix=$BUILDDIR --target=$TARGET --with-sysroot=$BUILDDIR \
     --disable-multilib --disable-shared --enable-languages=c,c++ \
     --enable-threads=posix --disable-win32-registry --enable-version-specific-runtime-libs \
@@ -72,7 +75,8 @@ cd build
 
 ln -s $TARGET $BUILDDIR/mingw
 
-make -j$(nproc) all-gcc && make install-gcc
+make -j$(nproc) all-gcc
+make install-gcc
 
 PATH=$BUILDDIR/bin:$PATH
 
@@ -80,26 +84,22 @@ PATH=$BUILDDIR/bin:$PATH
 mkdir -p $BUILDDIR/$TARGET/lib
 ln -s lib $BUILDDIR/$TARGET/lib64
 cd $BUILDDIR/tmp/mingw-w64-v$MINGW_VERSION/mingw-w64-crt/
-./configure CFLAGS="-s -O3" --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-lib64=$mingw_lib64 --enable-lib32=$mingw_lib32 --with-default-msvcrt=msvcrt --with-default-win32-winnt=0x0600
-make 
+./configure CFLAGS="-g0 -Os" LDFLAGS="-s" --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-lib64=$mingw_lib64 --enable-lib32=$mingw_lib32 --with-default-msvcrt=msvcrt --with-default-win32-winnt=0x0600
+make
 make install
 
 # winpthreads
 cd $BUILDDIR/tmp/mingw-w64-v$MINGW_VERSION/mingw-w64-libraries/winpthreads/
-./configure CFLAGS="-s -O3" --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-shared=no --enable-static
-make -j$(nproc) && make install
+./configure CFLAGS="-g0 -Os" LDFLAGS="-s" --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-shared=no --enable-static
+make -j$(nproc)
+make install
 
 # gcc libs
 cd $BUILDDIR/tmp/gcc-$GCC_VERSION/build
-make -j$(nproc) && make install
+make -j$(nproc)
+make install
 
 # clean
 cd $BUILDDIR/
 rm -rf $BUILDDIR/tmp/
 rm $BUILDDIR/mingw
-
-# strip
-cd $BUILDDIR/
-find -executable -type f -exec strip -s {} ";" >&/dev/null
-find . -name "*.a" -type f -exec $TARGET-strip -d {} ";" >&/dev/null
-find . -name "*.o" -type f -exec $TARGET-strip -d {} ";" >&/dev/null
