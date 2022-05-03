@@ -56,6 +56,9 @@ export ARCH
 ./scripts/geoip.sh
 ./scripts/libupnp.sh
 
+./scripts/mbedtls.sh
+./scripts/curl.sh
+
 if [ "$USE_LLVM" == "no" ]; then
     ./scripts/gettext.sh
 fi

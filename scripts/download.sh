@@ -18,3 +18,5 @@ wget http://prdownloads.sourceforge.net/amule/aMule-2.3.3.tar.xz
 git clone https://github.com/maxmind/geoip-api-c.git
 wget https://github.com/persmule/amule-dlp.antiLeech/archive/refs/heads/master.zip -O amule-dlp.antiLeech-master.zip
 wget https://github.com/persmule/amule-dlp/archive/refs/heads/master.zip -O amule-dlp-master.zip
+wget https://curl.se/download/curl-7.83.0.tar.xz
+wget https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v3.1.0.tar.gz -O mbedtls.3.1.0.tar.gz

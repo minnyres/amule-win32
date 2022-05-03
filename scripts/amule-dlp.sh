@@ -14,6 +14,8 @@ cd src
 7z x amule-dlp-master.zip
 cd amule-dlp-master
 
+patch -p1 <../../patches/amule-fix-curl_with_tls.patch
+patch -p1 <../../patches/amule-fix-geoip_url.patch
 patch -p0 <../../patches/amule-fix-upnp_cross_compile.patch
 patch -p0 <../../patches/amule-fix-wchar_t.patch
 patch -p0 <../../patches/amule-fix-exception.patch
@@ -22,8 +24,9 @@ patch -p1 <../../patches/amule-fix-dlp.patch
 patch -p1 <../../patches/amule-fix-boost_llvm.patch
 
 ./autogen.sh
-./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include" \
+./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -DHAVE_LIBCURL" \
     LDFLAGS="-L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib" \
+    CXXFLAGS="-DCURL_STATICLIB" CFLAGS="-DCURL_STATICLIB" \
     --prefix=$BUILDDIR/amule-dlp --host=$TARGET \
     --enable-amule-daemon --enable-webserver --enable-amulecmd --enable-amule-gui \
     --enable-cas --enable-wxcas --enable-alc --enable-alcc --enable-fileview \
@@ -31,6 +34,7 @@ patch -p1 <../../patches/amule-fix-boost_llvm.patch
     --with-zlib=$BUILDDIR/zlib \
     --with-wx-prefix=$BUILDDIR/wxwidgets --with-wx-config=$BUILDDIR/wxwidgets/bin/wx-config \
     --with-crypto-prefix=$BUILDDIR/cryptopp \
+    --with-libcurl=$BUILDDIR/curl \
     --with-libintl-prefix=$BUILDDIR/gettext --with-libiconv-prefix=$BUILDDIR/libiconv \
     --with-geoip-static -with-geoip-lib=$BUILDDIR/geoip/lib --with-geoip-headers=$BUILDDIR/geoip/include \
     --with-libpng-prefix=$BUILDDIR/libpng --with-libpng-config=$BUILDDIR/libpng/bin/libpng-config \
@@ -56,6 +60,7 @@ $TARGET-strip $BUILDDIR/amule-dlp/bin/*.exe
 
 cd ..
 mkdir amule-dlp
+cp curl-ca-bundle.crt amule-dlp
 cp $BUILDDIR/amule-dlp/bin/*.exe amule-dlp
 cp $BUILDDIR/amule-dlp/bin/*.dll amule-dlp
 cp -r $BUILDDIR/amule-dlp/share/locale/ amule-dlp

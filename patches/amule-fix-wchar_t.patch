@@ -1,6 +1,38 @@
-diff --color --color -ruN src.new/LibSocketAsio.cpp src/LibSocketAsio.cpp
---- src/LibSocketAsio.cpp	2022-01-10 01:03:45.477232405 +0900
-+++ src/LibSocketAsio.cpp	2022-01-10 01:04:41.145186002 +0900
+diff -ruN src.new/HTTPDownload.cpp src/HTTPDownload.cpp
+--- src.new/HTTPDownload.cpp	2022-05-02 21:18:27.956149797 +0800
++++ src/HTTPDownload.cpp	2022-05-02 21:25:08.986147464 +0800
+@@ -28,14 +28,6 @@
+ #	include "config.h"				// Needed for HAVE_LIBCURL
+ #endif
+ 
+-#ifdef HAVE_LIBCURL
+-#	include <curl/curl.h>
+-#	include <common/ClientVersion.h>		// Needed for the VERSION_ defines
+-#	include <common/MacrosProgramSpecific.h>	// Needed for GUI_ONLY()
+-#else
+-#	include <wx/protocol/http.h>
+-#endif
+-
+ #include <wx/wfstream.h>				// Needed for wxFFileOutputStream
+ #include "HTTPDownload.h"				// Interface declarations
+ #include <common/StringFunctions.h>		// Needed for unicode2char
+@@ -47,6 +39,13 @@
+ #include "ScopedPtr.h"
+ #include <wx/filename.h>				// Needed for wxFileName
+ 
++#ifdef HAVE_LIBCURL
++#	include <curl/curl.h>
++#	include <common/ClientVersion.h>		// Needed for the VERSION_ defines
++#	include <common/MacrosProgramSpecific.h>	// Needed for GUI_ONLY()
++#else
++#	include <wx/protocol/http.h>
++#endif
+ 
+ #ifndef AMULE_DAEMON
+ #include "inetdownload.h"	// Needed for inetDownload
+diff -ruN src.new/LibSocketAsio.cpp src/LibSocketAsio.cpp
+--- src.new/LibSocketAsio.cpp	2022-05-02 21:18:27.886149797 +0800
++++ src/LibSocketAsio.cpp	2022-05-02 21:18:57.996149622 +0800
 @@ -25,6 +25,8 @@
  
  #include "config.h"		// Needed for HAVE_BOOST_SOURCES
@@ -19,9 +51,9 @@ diff --color --color -ruN src.new/LibSocketAsio.cpp src/LibSocketAsio.cpp
  #include <common/Format.h>	// Needed for CFormat
  #include "Logger.h"
  #include "GuiEvents.h"
-diff --color --color -ruN src.new/UPnPBase.cpp src/UPnPBase.cpp
---- src/UPnPBase.cpp	2022-01-10 01:03:45.477232405 +0900
-+++ src/UPnPBase.cpp	2022-01-10 01:05:00.745169657 +0900
+diff -ruN src.new/UPnPBase.cpp src/UPnPBase.cpp
+--- src.new/UPnPBase.cpp	2022-05-02 21:18:27.886149797 +0800
++++ src/UPnPBase.cpp	2022-05-02 21:18:57.996149622 +0800
 @@ -27,13 +27,13 @@
  
  #ifdef ENABLE_UPNP
@@ -37,9 +69,9 @@ diff --color --color -ruN src.new/UPnPBase.cpp src/UPnPBase.cpp
  
  #include <algorithm>		// For transform()
  
-diff --color --color -ruN src.new/UPnPBase.h src/UPnPBase.h
---- src/UPnPBase.h	2022-01-10 01:03:45.493232392 +0900
-+++ src/UPnPBase.h	2022-01-10 01:05:27.329147497 +0900
+diff -ruN src.new/UPnPBase.h src/UPnPBase.h
+--- src.new/UPnPBase.h	2022-05-02 21:18:27.916149797 +0800
++++ src/UPnPBase.h	2022-05-02 21:18:57.996149622 +0800
 @@ -29,11 +29,11 @@
  #define AMULE_UPNP_H
  
@@ -53,9 +85,9 @@ diff --color --color -ruN src.new/UPnPBase.h src/UPnPBase.h
  
  #include <common/SmartPtr.h>		// Needed for CSmartPtr
  
-diff --color --color -ruN src.new/UPnPCompatibility.h src/UPnPCompatibility.h
---- src/UPnPCompatibility.h	2022-01-10 01:03:45.481232402 +0900
-+++ src/UPnPCompatibility.h	2022-01-10 01:05:59.961120309 +0900
+diff -ruN src.new/UPnPCompatibility.h src/UPnPCompatibility.h
+--- src.new/UPnPCompatibility.h	2022-05-02 21:18:27.896149797 +0800
++++ src/UPnPCompatibility.h	2022-05-02 21:18:57.996149622 +0800
 @@ -27,6 +27,8 @@
  #ifndef UPNPCOMPATIBILITY_H
  #define UPNPCOMPATIBILITY_H

@@ -1,0 +1,800 @@
+From df1739b0fffbf9845193708a48953b670aa0cfd7 Mon Sep 17 00:00:00 2001
+From: cat <cat@LAPTOP-LBAI8P2A.localdomain>
+Date: Mon, 2 May 2022 22:26:26 +0800
+Subject: [PATCH] Use libcurl for HTTP transfers
+
+---
+ configure.ac             |   7 +
+ m4/libcurl.m4            | 272 +++++++++++++++++++++++++++++++++++++++
+ src/HTTPDownload.cpp     | 264 ++++++++++++++++++++++++++++++++++++-
+ src/HTTPDownload.h       |   2 +
+ src/Makefile.am          |   4 +-
+ src/amule-remote-gui.cpp |  28 +++-
+ src/amule.cpp            |  23 +++-
+ 7 files changed, 592 insertions(+), 8 deletions(-)
+ create mode 100644 m4/libcurl.m4
+
+diff --git a/configure.ac b/configure.ac
+index 175d712..17b0e64 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -233,6 +233,11 @@ MULE_IF_ENABLED_ANY([monolithic, amule-daemon, amule-gui, fileview],
+ ])])
+ 
+ 
++# Check for libcurl
++MULE_IF_ENABLED_ANY([monolithic, amule-daemon, amule-gui],
++[LIBCURL_CHECK_CONFIG(, [7.19.1],, [MULE_WARNING([libcurl not found or disabled. Reverting to using wxHTTP for http download, but beware, https won't be supported.])])])
++
++
+ MULE_COMPILATION_FLAGS
+ 
+ 
+@@ -556,6 +561,8 @@ AS_IF([test ${with_boost:-no} != no],
+ )])
+ MULE_IF_ENABLED_ANY([monolithic, amule-daemon, amule-gui, fileview],
+ 	[echo "                             crypto++              ${CRYPTOPP_VERSION_STRING} (in ${CRYPTOPP_PREFIX})"])
++MULE_IF_ENABLED_ANY([monolithic, amule-daemon, amule-gui],
++	[echo "                             libcurl               ${libcurl_cv_lib_curl_version:-Not detected}"])
+ MULE_IF_ENABLED([upnp], [
+ 	AS_IF([test -n "$with_libupnp_prefix"], [libupnp_place=" (in $with_libupnp_prefix)"])
+ 	echo "                             libupnp               ${LIBUPNP_VERSION:-Not detected}${libupnp_place:-}"
+diff --git a/m4/libcurl.m4 b/m4/libcurl.m4
+new file mode 100644
+index 0000000..4c2bae2
+--- /dev/null
++++ b/m4/libcurl.m4
+@@ -0,0 +1,272 @@
++#***************************************************************************
++#                                  _   _ ____  _
++#  Project                     ___| | | |  _ \| |
++#                             / __| | | | |_) | |
++#                            | (__| |_| |  _ <| |___
++#                             \___|\___/|_| \_\_____|
++#
++# Copyright (C) 2006 - 2020, David Shaw <dshaw@jabberwocky.com>
++#
++# This software is licensed as described in the file COPYING, which
++# you should have received as part of this distribution. The terms
++# are also available at https://curl.haxx.se/docs/copyright.html.
++#
++# You may opt to use, copy, modify, merge, publish, distribute and/or sell
++# copies of the Software, and permit persons to whom the Software is
++# furnished to do so, under the terms of the COPYING file.
++#
++# This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
++# KIND, either express or implied.
++#
++###########################################################################
++# LIBCURL_CHECK_CONFIG ([DEFAULT-ACTION], [MINIMUM-VERSION],
++#                       [ACTION-IF-YES], [ACTION-IF-NO])
++# ----------------------------------------------------------
++#      David Shaw <dshaw@jabberwocky.com>   May-09-2006
++#
++# Checks for libcurl.  DEFAULT-ACTION is the string yes or no to
++# specify whether to default to --with-libcurl or --without-libcurl.
++# If not supplied, DEFAULT-ACTION is yes.  MINIMUM-VERSION is the
++# minimum version of libcurl to accept.  Pass the version as a regular
++# version number like 7.10.1. If not supplied, any version is
++# accepted.  ACTION-IF-YES is a list of shell commands to run if
++# libcurl was successfully found and passed the various tests.
++# ACTION-IF-NO is a list of shell commands that are run otherwise.
++# Note that using --without-libcurl does run ACTION-IF-NO.
++#
++# This macro #defines HAVE_LIBCURL if a working libcurl setup is
++# found, and sets @LIBCURL@ and @LIBCURL_CPPFLAGS@ to the necessary
++# values.  Other useful defines are LIBCURL_FEATURE_xxx where xxx are
++# the various features supported by libcurl, and LIBCURL_PROTOCOL_yyy
++# where yyy are the various protocols supported by libcurl.  Both xxx
++# and yyy are capitalized.  See the list of AH_TEMPLATEs at the top of
++# the macro for the complete list of possible defines.  Shell
++# variables $libcurl_feature_xxx and $libcurl_protocol_yyy are also
++# defined to 'yes' for those features and protocols that were found.
++# Note that xxx and yyy keep the same capitalization as in the
++# curl-config list (e.g. it's "HTTP" and not "http").
++#
++# Users may override the detected values by doing something like:
++# LIBCURL="-lcurl" LIBCURL_CPPFLAGS="-I/usr/myinclude" ./configure
++#
++# For the sake of sanity, this macro assumes that any libcurl that is
++# found is after version 7.7.2, the first version that included the
++# curl-config script.  Note that it is very important for people
++# packaging binary versions of libcurl to include this script!
++# Without curl-config, we can only guess what protocols are available,
++# or use curl_version_info to figure it out at runtime.
++
++AC_DEFUN([LIBCURL_CHECK_CONFIG],
++[
++  AH_TEMPLATE([LIBCURL_FEATURE_SSL],[Defined if libcurl supports SSL])
++  AH_TEMPLATE([LIBCURL_FEATURE_KRB4],[Defined if libcurl supports KRB4])
++  AH_TEMPLATE([LIBCURL_FEATURE_IPV6],[Defined if libcurl supports IPv6])
++  AH_TEMPLATE([LIBCURL_FEATURE_LIBZ],[Defined if libcurl supports libz])
++  AH_TEMPLATE([LIBCURL_FEATURE_ASYNCHDNS],[Defined if libcurl supports AsynchDNS])
++  AH_TEMPLATE([LIBCURL_FEATURE_IDN],[Defined if libcurl supports IDN])
++  AH_TEMPLATE([LIBCURL_FEATURE_SSPI],[Defined if libcurl supports SSPI])
++  AH_TEMPLATE([LIBCURL_FEATURE_NTLM],[Defined if libcurl supports NTLM])
++
++  AH_TEMPLATE([LIBCURL_PROTOCOL_HTTP],[Defined if libcurl supports HTTP])
++  AH_TEMPLATE([LIBCURL_PROTOCOL_HTTPS],[Defined if libcurl supports HTTPS])
++  AH_TEMPLATE([LIBCURL_PROTOCOL_FTP],[Defined if libcurl supports FTP])
++  AH_TEMPLATE([LIBCURL_PROTOCOL_FTPS],[Defined if libcurl supports FTPS])
++  AH_TEMPLATE([LIBCURL_PROTOCOL_FILE],[Defined if libcurl supports FILE])
++  AH_TEMPLATE([LIBCURL_PROTOCOL_TELNET],[Defined if libcurl supports TELNET])
++  AH_TEMPLATE([LIBCURL_PROTOCOL_LDAP],[Defined if libcurl supports LDAP])
++  AH_TEMPLATE([LIBCURL_PROTOCOL_DICT],[Defined if libcurl supports DICT])
++  AH_TEMPLATE([LIBCURL_PROTOCOL_TFTP],[Defined if libcurl supports TFTP])
++  AH_TEMPLATE([LIBCURL_PROTOCOL_RTSP],[Defined if libcurl supports RTSP])
++  AH_TEMPLATE([LIBCURL_PROTOCOL_POP3],[Defined if libcurl supports POP3])
++  AH_TEMPLATE([LIBCURL_PROTOCOL_IMAP],[Defined if libcurl supports IMAP])
++  AH_TEMPLATE([LIBCURL_PROTOCOL_SMTP],[Defined if libcurl supports SMTP])
++
++  AC_ARG_WITH(libcurl,
++     AS_HELP_STRING([--with-libcurl=PREFIX],[look for the curl library in PREFIX/lib and headers in PREFIX/include]),
++     [_libcurl_with=$withval],[_libcurl_with=ifelse([$1],,[yes],[$1])])
++
++  if test "$_libcurl_with" != "no" ; then
++
++     AC_PROG_AWK
++
++     _libcurl_version_parse="eval $AWK '{split(\$NF,A,\".\"); X=256*256*A[[1]]+256*A[[2]]+A[[3]]; print X;}'"
++
++     _libcurl_try_link=yes
++
++     if test -d "$_libcurl_with" ; then
++        LIBCURL_CPPFLAGS="-I$withval/include"
++        _libcurl_ldflags="-L$withval/lib"
++        AC_PATH_PROG([_libcurl_config],[curl-config],[],
++                     ["$withval/bin"])
++     else
++        AC_PATH_PROG([_libcurl_config],[curl-config],[],[$PATH])
++     fi
++
++     if test x$_libcurl_config != "x" ; then
++        AC_CACHE_CHECK([for the version of libcurl],
++           [libcurl_cv_lib_curl_version],
++           [libcurl_cv_lib_curl_version=`$_libcurl_config --version | $AWK '{print $[]2}'`])
++
++        _libcurl_version=`echo $libcurl_cv_lib_curl_version | $_libcurl_version_parse`
++        _libcurl_wanted=`echo ifelse([$2],,[0],[$2]) | $_libcurl_version_parse`
++
++        if test $_libcurl_wanted -gt 0 ; then
++           AC_CACHE_CHECK([for libcurl >= version $2],
++              [libcurl_cv_lib_version_ok],
++              [
++              if test $_libcurl_version -ge $_libcurl_wanted ; then
++                 libcurl_cv_lib_version_ok=yes
++              else
++                 libcurl_cv_lib_version_ok=no
++              fi
++              ])
++        fi
++
++        if test $_libcurl_wanted -eq 0 || test x$libcurl_cv_lib_version_ok = xyes ; then
++           if test x"$LIBCURL_CPPFLAGS" = "x" ; then
++              LIBCURL_CPPFLAGS=`$_libcurl_config --cflags`
++           fi
++           if test x"$LIBCURL" = "x" ; then
++              LIBCURL=`$_libcurl_config --static-libs`
++
++              # This is so silly, but Apple actually has a bug in their
++              # curl-config script.  Fixed in Tiger, but there are still
++              # lots of Panther installs around.
++              case "${host}" in
++                 powerpc-apple-darwin7*)
++                    LIBCURL=`echo $LIBCURL | sed -e 's|-arch i386||g'`
++                 ;;
++              esac
++           fi
++
++           # All curl-config scripts support --feature
++           _libcurl_features=`$_libcurl_config --feature`
++
++           # Is it modern enough to have --protocols? (7.12.4)
++           if test $_libcurl_version -ge 461828 ; then
++              _libcurl_protocols=`$_libcurl_config --protocols`
++           fi
++        else
++           _libcurl_try_link=no
++        fi
++
++        unset _libcurl_wanted
++     fi
++
++     if test $_libcurl_try_link = yes ; then
++
++        # we didn't find curl-config, so let's see if the user-supplied
++        # link line (or failing that, "-lcurl") is enough.
++        LIBCURL=${LIBCURL-"$_libcurl_ldflags -lcurl"}
++
++        AC_CACHE_CHECK([whether libcurl is usable],
++           [libcurl_cv_lib_curl_usable],
++           [
++           _libcurl_save_cppflags=$CPPFLAGS
++           CPPFLAGS="$LIBCURL_CPPFLAGS $CPPFLAGS"
++           _libcurl_save_libs=$LIBS
++           LIBS="$LIBCURL $LIBS"
++
++           AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <curl/curl.h>]],[[
++/* Try and use a few common options to force a failure if we are
++   missing symbols or can't link. */
++int x;
++curl_easy_setopt(NULL,CURLOPT_URL,NULL);
++x=CURL_ERROR_SIZE;
++x=CURLOPT_WRITEFUNCTION;
++x=CURLOPT_WRITEDATA;
++x=CURLOPT_ERRORBUFFER;
++x=CURLOPT_STDERR;
++x=CURLOPT_VERBOSE;
++if (x) {;}
++]])],libcurl_cv_lib_curl_usable=yes,libcurl_cv_lib_curl_usable=no)
++
++           CPPFLAGS=$_libcurl_save_cppflags
++           LIBS=$_libcurl_save_libs
++           unset _libcurl_save_cppflags
++           unset _libcurl_save_libs
++           ])
++
++        if test $libcurl_cv_lib_curl_usable = yes ; then
++
++           # Does curl_free() exist in this version of libcurl?
++           # If not, fake it with free()
++
++           _libcurl_save_cppflags=$CPPFLAGS
++           CPPFLAGS="$CPPFLAGS $LIBCURL_CPPFLAGS"
++           _libcurl_save_libs=$LIBS
++           LIBS="$LIBS $LIBCURL"
++
++           AC_CHECK_FUNC(curl_free,,
++              AC_DEFINE(curl_free,free,
++                [Define curl_free() as free() if our version of curl lacks curl_free.]))
++
++           CPPFLAGS=$_libcurl_save_cppflags
++           LIBS=$_libcurl_save_libs
++           unset _libcurl_save_cppflags
++           unset _libcurl_save_libs
++
++           AC_DEFINE(HAVE_LIBCURL,1,
++             [Define to 1 if you have a functional curl library.])
++           AC_SUBST(LIBCURL_CPPFLAGS)
++           AC_SUBST(LIBCURL)
++
++           for _libcurl_feature in $_libcurl_features ; do
++              AC_DEFINE_UNQUOTED(AS_TR_CPP(libcurl_feature_$_libcurl_feature),[1])
++              eval AS_TR_SH(libcurl_feature_$_libcurl_feature)=yes
++           done
++
++           if test "x$_libcurl_protocols" = "x" ; then
++
++              # We don't have --protocols, so just assume that all
++              # protocols are available
++              _libcurl_protocols="HTTP FTP FILE TELNET LDAP DICT TFTP"
++
++              if test x$libcurl_feature_SSL = xyes ; then
++                 _libcurl_protocols="$_libcurl_protocols HTTPS"
++
++                 # FTPS wasn't standards-compliant until version
++                 # 7.11.0 (0x070b00 == 461568)
++                 if test $_libcurl_version -ge 461568; then
++                    _libcurl_protocols="$_libcurl_protocols FTPS"
++                 fi
++              fi
++
++              # RTSP, IMAP, POP3 and SMTP were added in
++              # 7.20.0 (0x071400 == 463872)
++              if test $_libcurl_version -ge 463872; then
++                 _libcurl_protocols="$_libcurl_protocols RTSP IMAP POP3 SMTP"
++              fi
++           fi
++
++           for _libcurl_protocol in $_libcurl_protocols ; do
++              AC_DEFINE_UNQUOTED(AS_TR_CPP(libcurl_protocol_$_libcurl_protocol),[1])
++              eval AS_TR_SH(libcurl_protocol_$_libcurl_protocol)=yes
++           done
++        else
++           unset LIBCURL
++           unset LIBCURL_CPPFLAGS
++        fi
++     fi
++
++     unset _libcurl_try_link
++     unset _libcurl_version_parse
++     unset _libcurl_config
++     unset _libcurl_feature
++     unset _libcurl_features
++     unset _libcurl_protocol
++     unset _libcurl_protocols
++     unset _libcurl_version
++     unset _libcurl_ldflags
++  fi
++
++  if test x$_libcurl_with = xno || test x$libcurl_cv_lib_curl_usable != xyes ; then
++     # This is the IF-NO path
++     ifelse([$4],,:,[$4])
++  else
++     # This is the IF-YES path
++     ifelse([$3],,:,[$3])
++  fi
++
++  unset _libcurl_with
++])dnl
+diff --git a/src/HTTPDownload.cpp b/src/HTTPDownload.cpp
+index 11df056..b105408 100644
+--- a/src/HTTPDownload.cpp
++++ b/src/HTTPDownload.cpp
+@@ -24,10 +24,19 @@
+ //
+ 
+ 
+-#include <wx/wfstream.h>
+-#include <wx/protocol/http.h>
++#ifdef HAVE_CONFIG_H
++#	include "config.h"				// Needed for HAVE_LIBCURL
++#endif
+ 
++#ifdef HAVE_LIBCURL
++#	include <curl/curl.h>
++#	include <common/ClientVersion.h>		// Needed for the VERSION_ defines
++#	include <common/MacrosProgramSpecific.h>	// Needed for GUI_ONLY()
++#else
++#	include <wx/protocol/http.h>
++#endif
+ 
++#include <wx/wfstream.h>				// Needed for wxFFileOutputStream
+ #include "HTTPDownload.h"				// Interface declarations
+ #include <common/StringFunctions.h>		// Needed for unicode2char
+ #include "OtherFunctions.h"				// Needed for CastChild
+@@ -185,13 +194,71 @@ wxString CHTTPDownloadThread::FormatDateHTTP(const wxDateTime& date)
+ }
+ 
+ 
++#ifdef HAVE_LIBCURL
++
++size_t mule_curl_write_callback(char *ptr, size_t WXUNUSED(size), size_t nmemb, void *userdata)
++{
++	wxFFileOutputStream *outstream = static_cast<wxFFileOutputStream *>(userdata);
++
++	// According to the documentation size will always be 1.
++	outstream->Write(ptr, nmemb);
++
++	return outstream->LastWrite();
++}
++
++#ifdef __DEBUG__
++int mule_curl_debug_callback(CURL* WXUNUSED(handle), curl_infotype type, char *data, size_t WXUNUSED(size), void* WXUNUSED(userptr))
++{
++	if (type == CURLINFO_TEXT) {
++		AddDebugLogLineN(logHTTP, CFormat(wxT("curl: %s")) % wxString(data));
++	}
++
++	return 0;
++}
++#endif
++
++int mule_curl_xferinfo_callback(void *clientp, curl_off_t GUI_ONLY(dltotal), curl_off_t GUI_ONLY(dlnow), curl_off_t WXUNUSED(ultotal), curl_off_t WXUNUSED(ulnow))
++{
++	CHTTPDownloadThread *thread = static_cast<CHTTPDownloadThread *>(clientp);
++
++	if (thread->TestDestroy()) {
++		// returning nonzero will abort the current transfer
++		return 1;
++	}
++
++#ifndef AMULE_DAEMON
++	if (thread->GetProgressDialog()) {
++		CMuleInternalEvent evt(wxEVT_HTTP_PROGRESS);
++		evt.SetInt(dlnow);
++		evt.SetExtraLong(dltotal);
++		wxPostEvent(thread->GetProgressDialog(), evt);
++	}
++#endif
++
++	return 0;
++}
++
++int mule_curl_progress_callback(void *clientp, double dltotal, double dlnow, double WXUNUSED(ultotal), double WXUNUSED(ulnow))
++{
++	return mule_curl_xferinfo_callback(clientp, (curl_off_t)dltotal, (curl_off_t)dlnow, 0, 0);
++}
++
++#endif /* HAVE_LIBCURL */
++
++
+ CMuleThread::ExitCode CHTTPDownloadThread::Entry()
+ {
+ 	if (TestDestroy()) {
+ 		return NULL;
+ 	}
+ 
++#ifdef HAVE_LIBCURL
++	CURL *curl;
++	CURLcode res;
++	static unsigned int curl_version = 0;
++#else
+ 	wxHTTP* url_handler = NULL;
++#endif
+ 
+ 	AddDebugLogLineN(logHTTP, wxT("HTTP download thread started"));
+ 
+@@ -210,6 +277,192 @@ CMuleThread::ExitCode CHTTPDownloadThread::Entry()
+ 			throw wxString(_("The URL to download can't be empty"));
+ 		}
+ 
++#ifdef HAVE_LIBCURL
++
++		if (curl_version == 0) {
++			curl_version = curl_version_info(CURLVERSION_NOW)->version_num;
++		}
++
++		curl = curl_easy_init();
++		if (curl) {
++			struct curl_slist *list = NULL;
++
++			curl_easy_setopt(curl, CURLOPT_URL, (const char *)unicode2char(m_url));
++
++			curl_easy_setopt(curl, CURLOPT_CAINFO, "curl-ca-bundle.crt");
++
++			// follow redirects
++			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
++
++			// set write callback
++			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, mule_curl_write_callback);
++			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &outfile);
++
++#ifdef __DEBUG__
++			// send libcurl verbose messages to aMule debug log
++			curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, mule_curl_debug_callback);
++			curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
++#endif
++
++			// show download progress
++			// This callback is used to cancel an ongoing transfer.
++#if LIBCURL_VERSION_NUM >= 0x072000
++			// CURLOPT_XFERINFOFUNCTION was introduced in 7.32.0.
++			if (curl_version >= 0x072000) {
++				curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, mule_curl_xferinfo_callback);
++				curl_easy_setopt(curl, CURLOPT_XFERINFODATA, this);
++			} else
++#endif
++			{
++				// CURLOPT_PROGRESSFUNCTION is deprecated in favour of CURLOPT_XFERINFOFUNCTION
++				curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, mule_curl_progress_callback);
++				curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, this);
++			}
++			curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0L);
++
++			// Build a conditional get request if the last modified date of the file being updated is known
++			if (m_lastmodified.IsValid()) {
++				// Set a flag in the HTTP header that we only download if the file is newer.
++				// see: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.25
++				AddDebugLogLineN(logHTTP, wxT("If-Modified-Since: ") + FormatDateHTTP(m_lastmodified));
++				list = curl_slist_append(list, (const char *)unicode2char(wxT("If-Modified-Since: ") + FormatDateHTTP(m_lastmodified)));
++			}
++
++			// set custom header(s)
++			curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);
++
++			// some servers don't like requests without a user-agent, so set one
++			// always use a numerical version value, that's why we don't use VERSION
++			curl_easy_setopt(curl, CURLOPT_USERAGENT, "aMule/" wxSTRINGIZE(VERSION_MJR) "." wxSTRINGIZE(VERSION_MIN) "." wxSTRINGIZE(VERSION_UPDATE));
++
++			// set the outgoing address
++			if (!thePrefs::GetAddress().empty()) {
++				curl_easy_setopt(curl, CURLOPT_INTERFACE, (const char *)unicode2char(thePrefs::GetAddress()));
++			}
++
++			// proxy
++			if (use_proxy) {
++				switch (proxy_data->m_proxyType) {
++					case PROXY_SOCKS5:
++						curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
++#if LIBCURL_VERSION_NUM >= 0x073700
++						// CURLOPT_SOCKS5_AUTH was added in 7.55.0
++						if (proxy_data->m_enablePassword) {
++							curl_easy_setopt(curl, CURLOPT_SOCKS5_AUTH, CURLAUTH_BASIC);
++						} else {
++							curl_easy_setopt(curl, CURLOPT_SOCKS5_AUTH, CURLAUTH_NONE);
++						}
++#endif
++						break;
++					case PROXY_SOCKS4:
++						curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS4);
++						break;
++					case PROXY_HTTP:
++						curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
++						// Using only "Basic" authentication as the rest of the code
++						// (in Proxy.cpp) supports only that
++						curl_easy_setopt(curl, CURLOPT_PROXYAUTH, CURLAUTH_BASIC);
++						// Not tunneling through the proxy on purpose, let it cache
++						// HTTP traffic if possible (this is the default behaviour).
++						//curl_easy_setopt(curl, CURLOPT_HTTPPROXYTUNNEL, 0L);
++						break;
++					case PROXY_SOCKS4a:
++						curl_easy_setopt(curl, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS4A);
++						break;
++					default:
++						goto noProxy;
++				}
++				curl_easy_setopt(curl, CURLOPT_PROXY, (const char *)unicode2char(proxy_data->m_proxyHostName));
++				curl_easy_setopt(curl, CURLOPT_PROXYPORT, proxy_data->m_proxyPort);
++				if (proxy_data->m_enablePassword) {
++					curl_easy_setopt(curl, CURLOPT_PROXYUSERNAME, (const char *)unicode2char(proxy_data->m_userName));
++					curl_easy_setopt(curl, CURLOPT_PROXYPASSWORD, (const char *)unicode2char(proxy_data->m_password));
++				}
++			}
++noProxy:
++
++			// perform the action
++			res = curl_easy_perform(curl);
++
++			// clean up
++			curl_slist_free_all(list);
++
++			// check the result
++			if (res != CURLE_OK) {
++				m_result = HTTP_Error;
++				curl_easy_cleanup(curl);
++				throw wxString(CFormat(_("HTTP download failed: %s")) % wxString(curl_easy_strerror(res)));
++			} else {
++				long response_code;
++				res = curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
++				if (res != CURLE_OK) {
++					// getinfo() failed, but perform() succeeded. Let's assume the transfer was O.K.
++					AddDebugLogLineN(logHTTP, wxT("curl_easy_getinfo() failed: ") + wxString(curl_easy_strerror(res)));
++					m_result = HTTP_Success;
++				} else {
++					AddDebugLogLineN(logHTTP, CFormat(wxT("Response code: %d")) % response_code);
++					if (response_code == 304) {		// "Not Modified"
++						m_result = HTTP_Skipped;
++					} else if (response_code == 200) {	// "OK"
++						m_result = HTTP_Success;
++						/* TRANSLATORS: parameters are 'size transferred', 'URL' and 'download time' */
++						CFormat message(_("HTTP: Downloaded %s from '%s' in %s"));
++
++						// get downloaded size
++#if LIBCURL_VERSION_NUM >= 0x073700
++						/* CURLINFO_SIZE_DOWNLOAD_T was introduced in 7.55.0 */
++						/* check the runtime version, too */
++						if (curl_version >= 0x073700) {
++							curl_off_t dl;
++							curl_easy_getinfo(curl, CURLINFO_SIZE_DOWNLOAD_T, &dl);
++							message % CastItoXBytes(dl);
++						} else
++#endif
++						{
++							double dl;
++							curl_easy_getinfo(curl, CURLINFO_SIZE_DOWNLOAD, &dl);
++							message % CastItoXBytes((uint64)dl);
++						}
++
++						// get effective URL
++						{
++							char *url = NULL;
++							curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &url);
++							message % wxString(url);
++						}
++
++						// get download time
++#if LIBCURL_VERSION_NUM >= 0x073d00
++						/* In libcurl 7.61.0, support was added for extracting the time in plain
++						   microseconds. Older libcurl versions are stuck in using 'double' for this
++						   information. */
++						if (curl_version >= 0x073d00) {
++							curl_off_t tm;
++							curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME_T, &tm);
++							// CastSecondsToHM() uses milliseconds while we have microseconds now
++							message % CastSecondsToHM(tm / 1000000, (tm / 1000) % 1000);
++						} else
++#endif
++						{
++							double tm;
++							curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &tm);
++							message % CastSecondsToHM((uint32)tm, (uint16)(tm * 1000));
++						}
++
++						// Summarize transfer details
++						AddLogLineN(message);
++					} else {
++						m_result = HTTP_Error;
++					}
++				}
++			}
++
++			// clean up
++			curl_easy_cleanup(curl);
++		}
++
++#else /* == not HAVE_LIBCURL */
++
+ 		url_handler = new wxHTTP;
+ 		url_handler->SetProxyMode(use_proxy);
+ 
+@@ -284,6 +537,9 @@ CMuleThread::ExitCode CHTTPDownloadThread::Entry()
+ 				m_result = HTTP_Success;
+ 			}
+ 		}
++
++#endif /* ifelse HAVE_LIBCURL */
++
+ 	} catch (const wxString& error) {
+ 		if (wxFileExists(m_tempfile)) {
+ 			wxRemoveFile(m_tempfile);
+@@ -297,9 +553,11 @@ CMuleThread::ExitCode CHTTPDownloadThread::Entry()
+ 		thePrefs::SetLastHTTPDownloadURL(m_file_id, m_url);
+ 	}
+ 
++#ifndef HAVE_LIBCURL
+ 	if (url_handler) {
+ 		url_handler->Destroy();
+ 	}
++#endif
+ 
+ 	AddDebugLogLineN(logHTTP, wxT("HTTP download thread ended"));
+ 
+@@ -326,6 +584,7 @@ void CHTTPDownloadThread::OnExit()
+ }
+ 
+ 
++#ifndef HAVE_LIBCURL
+ //! This function's purpose is to handle redirections in a proper way.
+ wxInputStream* CHTTPDownloadThread::GetInputStream(wxHTTP * & url_handler, const wxString& location, bool proxy)
+ {
+@@ -440,6 +699,7 @@ wxInputStream* CHTTPDownloadThread::GetInputStream(wxHTTP * & url_handler, const
+ 
+ 	return url_read_stream;
+ }
++#endif /* !HAVE_LIBCURL */
+ 
+ void CHTTPDownloadThread::StopAll()
+ {
+diff --git a/src/HTTPDownload.h b/src/HTTPDownload.h
+index 73740f5..859deca 100644
+--- a/src/HTTPDownload.h
++++ b/src/HTTPDownload.h
+@@ -50,6 +50,8 @@ public:
+ 						bool showDialog, bool checkDownloadNewer);
+ 
+ 	static void StopAll();
++	wxEvtHandler *		GetProgressDialog() const { return m_companion; }
++
+ private:
+ 	ExitCode		Entry();
+ 	virtual void		OnExit();
+diff --git a/src/Makefile.am b/src/Makefile.am
+index cfde5b4..5e91d59 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -231,7 +231,7 @@ common_sources = \
+ core_libs = -L. -lmuleappcore $(LIBUPNP_LDFLAGS) $(LIBUPNP_LIBS)
+ gui_libs = -L. -lmuleappgui $(WX_LIBS) $(GEOIP_LDFLAGS) $(GEOIP_LIBS)
+ remote_common_libs = -Llibs/common -Llibs/ec/cpp -lmulecommon -lec $(BFD_LIBS) $(ZLIB_LDFLAGS) $(ZLIB_LIBS) $(RESOLV_LIB)
+-common_libs = -L. -lmuleappcommon $(remote_common_libs) -lmulesocket $(BOOST_SYSTEM_LDFLAGS) $(BOOST_SYSTEM_LIBS) $(CRYPTOPP_LDFLAGS) $(CRYPTOPP_LIBS)
++common_libs = -L. -lmuleappcommon $(remote_common_libs) -lmulesocket $(BOOST_SYSTEM_LDFLAGS) $(BOOST_SYSTEM_LIBS) $(CRYPTOPP_LDFLAGS) $(CRYPTOPP_LIBS) $(LIBCURL)
+ 
+ core_deps = libmuleappcore.a
+ gui_deps = libmuleappgui.a
+@@ -247,7 +247,7 @@ endif
+ #
+ core_flags = $(BOOST_CPPFLAGS) $(LIBUPNP_CPPFLAGS) $(LIBUPNP_CFLAGS)
+ gui_flags = $(WX_CPPFLAGS) $(GEOIP_CPPFLAGS)
+-common_flags = -I$(srcdir)/libs -Ilibs -I$(srcdir)/include $(CRYPTOPP_CPPFLAGS)
++common_flags = -I$(srcdir)/libs -Ilibs -I$(srcdir)/include $(CRYPTOPP_CPPFLAGS) $(LIBCURL_CPPFLAGS)
+ 
+ # --------- Apps ---------
+ 
+diff --git a/src/amule-remote-gui.cpp b/src/amule-remote-gui.cpp
+index 724d743..9bec24a 100644
+--- a/src/amule-remote-gui.cpp
++++ b/src/amule-remote-gui.cpp
+@@ -23,12 +23,22 @@
+ //
+ 
+ 
++#ifdef HAVE_CONFIG_H
++#	include "config.h"		// Needed for HAVE_LIBCURL, ASIO_SOCKETS
++#endif
++
+ #include <wx/ipc.h>
+ #include <wx/cmdline.h>			// Needed for wxCmdLineParser
+ #include <wx/config.h>			// Do_not_auto_remove (win32)
+ #include <wx/fileconf.h>		// Needed for wxFileConfig
+-#include <wx/socket.h>			// Needed for wxSocketBase
+ 
++#ifdef HAVE_LIBCURL
++#	include <curl/curl.h>
++#endif
++
++#if !(defined(HAVE_LIBCURL) && defined(ASIO_SOCKETS))
++#	include <wx/socket.h>		// Needed for wxSocketBase
++#endif
+ 
+ #include <common/Format.h>
+ #include <common/StringFunctions.h>
+@@ -139,7 +149,13 @@ int CamuleRemoteGuiApp::OnExit()
+ {
+ 	StopTickTimer();
+ 
++#ifdef HAVE_LIBCURL
++	curl_global_cleanup();
++#endif
++
++#if !(defined(HAVE_LIBCURL) && defined(ASIO_SOCKETS))
+ 	wxSocketBase::Shutdown();	// needed because we also called Initialize() manually
++#endif
+ 
+ 	return wxApp::OnExit();
+ }
+@@ -256,8 +272,16 @@ bool CamuleRemoteGuiApp::OnInit()
+ 		return false;
+ 	}
+ 
+-	// Initialize wx sockets (needed for http download in background with Asio sockets)
++#ifdef HAVE_LIBCURL
++	if (curl_global_init(CURL_GLOBAL_ALL) != 0) {
++		return false;
++	}
++#endif
++
++#if !(defined(HAVE_LIBCURL) && defined(ASIO_SOCKETS))
++	// Initialize wx sockets only if we actually use wx networking
+ 	wxSocketBase::Initialize();
++#endif
+ 
+ 	// Create the polling timer
+ 	poll_timer = new wxTimer(this,ID_CORE_TIMER_EVENT);
+diff --git a/src/amule.cpp b/src/amule.cpp
+index 478ba81..48f613b 100644
+--- a/src/amule.cpp
++++ b/src/amule.cpp
+@@ -38,11 +38,16 @@
+ #include <wx/cmdline.h>			// Needed for wxCmdLineParser
+ #include <wx/config.h>			// Do_not_auto_remove (win32)
+ #include <wx/fileconf.h>
+-#include <wx/socket.h>
+ #include <wx/tokenzr.h>
+ #include <wx/wfstream.h>
+ #include <wx/stopwatch.h>		// Needed for wxStopWatch
+ 
++#ifdef HAVE_LIBCURL
++#	include <curl/curl.h>
++#endif
++#if !(defined(HAVE_LIBCURL) && defined(ASIO_SOCKETS))
++#	include <wx/socket.h>
++#endif
+ 
+ #include <common/Format.h>		// Needed for CFormat
+ #include "kademlia/kademlia/Kademlia.h"
+@@ -324,7 +329,13 @@ int CamuleApp::OnExit()
+ 	m_AsioService = NULL;
+ #endif
+ 
++#ifdef HAVE_LIBCURL
++	curl_global_cleanup();
++#endif
++
++#if !(defined(HAVE_LIBCURL) && defined(ASIO_SOCKETS))
+ 	wxSocketBase::Shutdown();	// needed because we also called Initialize() manually
++#endif
+ 
+ 	if (m_app_state!=APP_STATE_STARTING) {
+ 		AddLogLineNS(_("aMule shutdown completed."));
+@@ -412,8 +423,16 @@ bool CamuleApp::OnInit()
+ 		return false;
+ 	}
+ 
+-	// Initialize wx sockets (needed for http download in background with Asio sockets)
++#ifdef HAVE_LIBCURL
++	if (curl_global_init(CURL_GLOBAL_ALL) != 0) {
++		return false;
++	}
++#endif
++
++#if !(defined(HAVE_LIBCURL) && defined(ASIO_SOCKETS))
++	// Initialize wx sockets only if we actually use wx networking
+ 	wxSocketBase::Initialize();
++#endif
+ 
+ 	// Some sanity check
+ 	if (!thePrefs::UseTrayIcon()) {
+-- 
+2.36.0
+
