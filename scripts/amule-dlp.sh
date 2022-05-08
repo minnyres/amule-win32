@@ -42,7 +42,7 @@ patch -p1 <../../patches/amule-fix-boost_llvm.patch
     --with-geoip-static -with-geoip-lib=$BUILDDIR/geoip/lib --with-geoip-headers=$BUILDDIR/geoip/include \
     --with-libpng-prefix=$BUILDDIR/libpng --with-libpng-config=$BUILDDIR/libpng/bin/libpng-config \
     --enable-static-boost --with-boost=$BUILDDIR/boost \
-    --with-libupnp-prefix=$BUILDDIR/libupnp --with-denoise-level=$denoise_level
+    --with-libupnp-prefix=$BUILDDIR/libupnp --with-denoise-level=$denoise_level --enable-ccache
 
 make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lws2_32" BOOST_SYSTEM_LDFLAGS="-L$BUILDDIR/boost/lib" -j$(nproc)
 make install
