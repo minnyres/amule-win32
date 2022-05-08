@@ -431,7 +431,7 @@ index 11df056..b105408 100644
 +
 +			curl_easy_setopt(curl, CURLOPT_URL, (const char *)unicode2char(m_url));
 +
-+			curl_easy_setopt(curl, CURLOPT_CAINFO, "curl-ca-bundle.crt");
++			// curl_easy_setopt(curl, CURLOPT_CAINFO, "curl-ca-bundle.crt");
 +
 +			// follow redirects
 +			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);

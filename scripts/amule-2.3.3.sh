@@ -2,10 +2,13 @@
 
 set -e
 
+mkdir amule
+
 if [ "$USE_LLVM" == "yes" ]; then
     export RC=$PWD/scripts/llvm-windres.sh
     denoise_level=0
 else
+    cp curl-ca-bundle.crt amule
     denoise_level=4
 fi
 
@@ -48,8 +51,6 @@ rm -rf aMule-2.3.3
 $TARGET-strip $BUILDDIR/amule/bin/*.exe
 
 cd ..
-mkdir amule
-cp curl-ca-bundle.crt amule
 cp $BUILDDIR/amule/bin/*.exe amule
 cp -r $BUILDDIR/amule/share/locale/ amule
 cp -r $BUILDDIR/amule/share/amule/* amule

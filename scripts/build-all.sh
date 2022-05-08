@@ -56,13 +56,12 @@ export ARCH
 ./scripts/geoip.sh
 ./scripts/libupnp.sh
 
-./scripts/mbedtls.sh
-./scripts/curl.sh
-
 if [ "$USE_LLVM" == "no" ]; then
     ./scripts/gettext.sh
+    ./scripts/mbedtls.sh
 fi
 
+./scripts/curl.sh
 ./scripts/cryptopp-autotools.sh
 ./scripts/wxwidgets.sh
 ./scripts/boost.sh

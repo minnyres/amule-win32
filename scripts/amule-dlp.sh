@@ -2,10 +2,13 @@
 
 set -e
 
+mkdir amule-dlp
+
 if [ "$USE_LLVM" == "yes" ]; then
     export RC=$PWD/scripts/llvm-windres.sh
     denoise_level=0
 else
+    cp curl-ca-bundle.crt amule-dlp
     denoise_level=4
 fi
 
@@ -59,8 +62,6 @@ rm -rf amule-dlp.antiLeech-master
 $TARGET-strip $BUILDDIR/amule-dlp/bin/*.exe
 
 cd ..
-mkdir amule-dlp
-cp curl-ca-bundle.crt amule-dlp
 cp $BUILDDIR/amule-dlp/bin/*.exe amule-dlp
 cp $BUILDDIR/amule-dlp/bin/*.dll amule-dlp
 cp -r $BUILDDIR/amule-dlp/share/locale/ amule-dlp
