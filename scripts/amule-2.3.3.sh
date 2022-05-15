@@ -12,9 +12,7 @@ else
     denoise_level=4
 fi
 
-cd src
-tar -xf aMule-2.3.3.tar.xz
-cd aMule-2.3.3
+cd src/aMule-2.3.3
 
 patch -p1 <../../patches/amule-fix-curl_with_tls.patch
 patch -p1 <../../patches/amule-fix-geoip_url.patch
@@ -44,9 +42,7 @@ patch -p1 <../../patches/amule-fix-boost_llvm.patch
 
 make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lws2_32" BOOST_SYSTEM_LDFLAGS="-L$BUILDDIR/boost/lib" -j$(nproc)
 make install
-
-cd ..
-rm -rf aMule-2.3.3
+make clean
 
 $TARGET-strip $BUILDDIR/amule/bin/*.exe
 

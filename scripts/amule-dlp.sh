@@ -13,9 +13,7 @@ else
 fi
 
 # amule-dlp
-cd src
-7z x amule-dlp-master.zip
-cd amule-dlp-master
+cd src/amule-dlp-master
 
 patch -p1 <../../patches/amule-fix-curl_with_tls.patch
 patch -p1 <../../patches/amule-fix-geoip_url.patch
@@ -46,12 +44,11 @@ patch -p1 <../../patches/amule-fix-boost_llvm.patch
 
 make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lws2_32" BOOST_SYSTEM_LDFLAGS="-L$BUILDDIR/boost/lib" -j$(nproc)
 make install
-cd ..
-rm -rf amule-dlp-master
+make clean
 
 # libantileech
-7z x amule-dlp.antiLeech-master.zip
-cd amule-dlp.antiLeech-master
+
+cd ../amule-dlp.antiLeech-master
 patch -p1 <../../patches/amule-fix-libantiLeech.patch
 PATH=$BUILDDIR/wxwidgets/bin:$PATH
 $TARGET-g++ -g0 -Os -s -static -fPIC -shared antiLeech.cpp antiLeech_wx.cpp Interface.cpp -o antileech.dll $(wx-config --cppflags) $(wx-config --libs)

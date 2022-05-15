@@ -8,12 +8,11 @@ export LDFLAGS="-s"
 
 cd src/geoip-api-c
 ./bootstrap
-mkdir -p build-geoip
-cd build-geoip
+mkdir build-$TARGET
+cd build-$TARGET
 ../configure --host=$TARGET --prefix=$BUILDDIR/geoip --enable-shared=no
 mkdir -p $BUILDDIR/geoip/lib
 ln -s lib $BUILDDIR/geoip/lib64
 make -j$(nproc)
 make install
-cd ..
-rm -rf build-geoip
+make clean

@@ -2,9 +2,7 @@
 
 set -e
 
-cd src
-7z x boost_1_78_0.7z
-cd boost_1_78_0/
+cd src/boost_1_78_0
 
 cd tools/build/
 ./bootstrap.sh
@@ -16,5 +14,4 @@ echo "using gcc : mingw : $TARGET-g++ ;" >user-config.jam
 b2 --user-config=./user-config.jam --with-system --build-dir=$PWD/build-boost --prefix=$BUILDDIR/boost \
     link=static runtime-link=static toolset=gcc-mingw target-os=windows \
     variant=release threading=multi address-model=32 install || true
-cd ..
-rm -rf boost_1_78_0/
+b2 --clean release
