@@ -14,14 +14,6 @@ fi
 
 cd src/aMule-2.3.3
 
-patch -p1 <../../patches/amule-fix-curl_with_tls.patch
-patch -p1 <../../patches/amule-fix-geoip_url.patch
-patch -p0 <../../patches/amule-fix-upnp_cross_compile.patch
-patch -p0 <../../patches/amule-fix-wchar_t.patch
-patch -p0 <../../patches/amule-fix-exception.patch
-patch -p1 <../../patches/amule-fix-unzip.patch
-patch -p1 <../../patches/amule-fix-boost_llvm.patch
-
 ./autogen.sh
 ./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -DHAVE_LIBCURL" \
     LDFLAGS="-L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib" \
@@ -46,7 +38,7 @@ make clean
 
 $TARGET-strip $BUILDDIR/amule/bin/*.exe
 
-cd ..
+cd ../..
 cp $BUILDDIR/amule/bin/*.exe amule
 cp -r $BUILDDIR/amule/share/locale/ amule
 cp -r $BUILDDIR/amule/share/amule/* amule

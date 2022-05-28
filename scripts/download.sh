@@ -35,6 +35,29 @@ tar -xf aMule-2.3.3.tar.xz
 7z x amule-dlp-master.zip
 7z x amule-dlp.antiLeech-master.zip
 
+cd aMule-2.3.3
+patch -p1 <../../patches/amule-fix-curl_with_tls.patch
+patch -p1 <../../patches/amule-fix-geoip_url.patch
+patch -p0 <../../patches/amule-fix-upnp_cross_compile.patch
+patch -p0 <../../patches/amule-fix-wchar_t.patch
+patch -p0 <../../patches/amule-fix-exception.patch
+patch -p1 <../../patches/amule-fix-unzip.patch
+patch -p1 <../../patches/amule-fix-boost_llvm.patch
+
+cd ../amule-dlp-master
+patch -p1 <../../patches/amule-fix-curl_with_tls.patch
+patch -p1 <../../patches/amule-fix-geoip_url.patch
+patch -p0 <../../patches/amule-fix-upnp_cross_compile.patch
+patch -p0 <../../patches/amule-fix-wchar_t.patch
+patch -p0 <../../patches/amule-fix-exception.patch
+patch -p1 <../../patches/amule-fix-unzip.patch
+patch -p1 <../../patches/amule-fix-dlp.patch
+patch -p1 <../../patches/amule-fix-boost_llvm.patch
+
+cd ../amule-dlp.antiLeech-master
+patch -p1 <../../patches/amule-fix-libantiLeech.patch
+
+cd ..
 mkdir cryptopp
 cd cryptopp
 7z x ../cryptopp860.zip
@@ -42,4 +65,4 @@ cd cryptopp
 tar -xf ../cryptopp-autotools-CRYPTOPP_8_6_0.tar.gz
 cp cryptopp-autotools-CRYPTOPP_8_6_0/* .
 rm -rf cryptopp-autotools-CRYPTOPP_8_6_0
-mkdir -p "$PWD/m4/"
+mkdir -p m4
