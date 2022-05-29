@@ -2,7 +2,7 @@
 
 set -e
 
-mkdir amule
+mkdir -p amule
 
 if [ "$USE_LLVM" == "yes" ]; then
     export RC=$PWD/scripts/llvm-windres.sh
@@ -42,7 +42,7 @@ cd ../..
 cp $BUILDDIR/amule/bin/*.exe amule
 cp -r $BUILDDIR/amule/share/locale/ amule
 cp -r $BUILDDIR/amule/share/amule/* amule
-mkdir amule/docs
+mkdir -p amule/docs
 cp $BUILDDIR/amule/share/doc/amule/* amule/docs
 7z a -mx9 amule-2.3.3-$ARCH.7z amule
 rm -rf amule

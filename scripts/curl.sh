@@ -9,7 +9,7 @@ else
 fi
 
 cd src/curl-7.83.0
-mkdir build-$TARGET
+mkdir -p build-$TARGET
 cd build-$TARGET
 ../configure --host=$TARGET --prefix=$BUILDDIR/curl --disable-debug --enable-optimize --enable-ipv6 \
     --enable-pthreads $ssl_option --with-zlib=$BUILDDIR/zlib --disable-shared --enable-static

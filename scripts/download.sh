@@ -58,7 +58,7 @@ cd ../amule-dlp.antiLeech-master
 patch -p1 <../../patches/amule-fix-libantiLeech.patch
 
 cd ..
-mkdir cryptopp
+mkdir -p cryptopp
 cd cryptopp
 7z x ../cryptopp860.zip
 

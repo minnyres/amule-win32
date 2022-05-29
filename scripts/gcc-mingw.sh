@@ -34,7 +34,7 @@ GCC_VERSION=12.1.0
 MINGW_VERSION=10.0.0
 BINUTILS_VERSION=2.38
 
-mkdir $BUILDDIR/tmp -p
+mkdir -p $BUILDDIR/tmp
 cd $BUILDDIR/tmp
 wget https://ftpmirror.gnu.org/gnu/gcc/gcc-$GCC_VERSION/gcc-$GCC_VERSION.tar.xz
 wget https://ftpmirror.gnu.org/gnu/binutils/binutils-$BINUTILS_VERSION.tar.xz
@@ -62,7 +62,7 @@ tar -xf gcc-$GCC_VERSION.tar.xz
 cd gcc-$GCC_VERSION
 ./contrib/download_prerequisites
 
-mkdir build
+mkdir -p build
 cd build
 ../configure CFLAGS="-g0 -Os" CXXFLAGS="-g0 -Os" CFLAGS_FOR_TARGET="-g0 -Os" \
     CXXFLAGS_FOR_TARGET="-g0 -Os" BOOT_CFLAGS="-g0 -Os" BOOT_CXXFLAGS="-g0 -Os" \
@@ -73,7 +73,7 @@ cd build
     --enable-fully-dynamic-string --enable-libgomp --enable-libssp --enable-lto \
     --disable-libstdcxx-pch --disable-libstdcxx-verbose
 
-ln -s $TARGET $BUILDDIR/mingw
+ln -snf $TARGET $BUILDDIR/mingw
 
 make -j$(nproc) all-gcc
 make install-gcc
@@ -82,7 +82,7 @@ PATH=$BUILDDIR/bin:$PATH
 
 # mingw-w64 crt
 mkdir -p $BUILDDIR/$TARGET/lib
-ln -s lib $BUILDDIR/$TARGET/lib64
+ln -snf lib $BUILDDIR/$TARGET/lib64
 cd $BUILDDIR/tmp/mingw-w64-v$MINGW_VERSION/mingw-w64-crt/
 ./configure CFLAGS="-g0 -Os" LDFLAGS="-s" --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-lib64=$mingw_lib64 --enable-lib32=$mingw_lib32 --with-default-msvcrt=msvcrt --with-default-win32-winnt=0x0502
 make

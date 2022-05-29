@@ -3,14 +3,14 @@
 set -e
 
 cd src/wxWidgets-3.0.5
-mkdir build-$TARGET
+mkdir -p build-$TARGET
 cd build-$TARGET
 ../configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include" \
     LDFLAGS="-L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib" \
     --host=$TARGET --prefix=$BUILDDIR/wxwidgets --with-zlib=sys --with-libpng=sys --with-msw --with-libiconv-prefix=$BUILDDIR/libiconv \
     --disable-shared --disable-debug_flag --disable-mediactrl --enable-optimise --enable-unicode
 mkdir -p $BUILDDIR/wxwidgets/lib
-ln -s lib $BUILDDIR/wxwidgets/lib64
+ln -snf lib $BUILDDIR/wxwidgets/lib64
 make -j$(nproc)
 make install
 make clean
@@ -28,5 +28,5 @@ cd $BUILDDIR/wxwidgets/lib
 
 for file in *.a; do
     newfile="${file//"-$TARGET"/""}"
-    ln -s $file $newfile
+    ln -snf $file $newfile
 done

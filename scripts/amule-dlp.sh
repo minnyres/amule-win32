@@ -2,7 +2,7 @@
 
 set -e
 
-mkdir amule-dlp
+mkdir -p amule-dlp
 
 if [ "$USE_LLVM" == "yes" ]; then
     export RC=$PWD/scripts/llvm-windres.sh
@@ -51,7 +51,7 @@ cp $BUILDDIR/amule-dlp/bin/*.exe amule-dlp
 cp $BUILDDIR/amule-dlp/bin/*.dll amule-dlp
 cp -r $BUILDDIR/amule-dlp/share/locale/ amule-dlp
 cp -r $BUILDDIR/amule-dlp/share/amule-dlp/* amule-dlp
-mkdir amule-dlp/docs
+mkdir -p amule-dlp/docs
 cp $BUILDDIR/amule-dlp/share/doc/amule-dlp/* amule-dlp/docs
 7z a -mx9 amule-dlp-$(printf '%(%Y-%m-%d)T\n' -1)-$ARCH.7z amule-dlp
 rm -rf amule-dlp
