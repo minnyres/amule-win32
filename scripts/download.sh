@@ -35,7 +35,10 @@ tar -xf aMule-2.3.3.tar.xz
 7z x amule-dlp-master.zip
 7z x amule-dlp.antiLeech-master.zip
 
-cd aMule-2.3.3
+cd mbedtls-3.1.0
+patch -p1 <../../patches/mbedtls-fix-vsnprintf_on_winxp.patch
+
+cd ../aMule-2.3.3
 patch -p1 <../../patches/amule-fix-curl_with_tls.patch
 patch -p1 <../../patches/amule-fix-geoip_url.patch
 patch -p0 <../../patches/amule-fix-upnp_cross_compile.patch
