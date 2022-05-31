@@ -37,9 +37,9 @@ Checkout the repository
     git clone https://github.com/minnyres/amule-win32.git
     cd amule-win32
     
-Download the source code of aMule and third party libraries
+Download and prepare the source code
 
-    ./scripts/download.sh
+    ./scripts/download_and_prepare.sh
     
 ### Build the cross toolchain
 
