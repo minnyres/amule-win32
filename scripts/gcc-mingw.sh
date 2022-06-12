@@ -52,7 +52,7 @@ make install
 cd $BUILDDIR/tmp
 tar -xf mingw-w64-v$MINGW_VERSION.tar.bz2
 cd mingw-w64-v$MINGW_VERSION/mingw-w64-headers
-./configure --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-sdk=all --enable-idl --enable-secure-api --with-default-msvcrt=msvcrt --with-default-win32-winnt=0x0502
+./configure --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-sdk=all --enable-idl --enable-secure-api --with-default-msvcrt=msvcrt --with-default-win32-winnt=0x0600
 make all
 make install
 
@@ -84,7 +84,7 @@ PATH=$BUILDDIR/bin:$PATH
 mkdir -p $BUILDDIR/$TARGET/lib
 ln -snf lib $BUILDDIR/$TARGET/lib64
 cd $BUILDDIR/tmp/mingw-w64-v$MINGW_VERSION/mingw-w64-crt/
-./configure CFLAGS="-g0 -Os" LDFLAGS="-s" --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-lib64=$mingw_lib64 --enable-lib32=$mingw_lib32 --with-default-msvcrt=msvcrt --with-default-win32-winnt=0x0502
+./configure CFLAGS="-g0 -Os" LDFLAGS="-s" --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-lib64=$mingw_lib64 --enable-lib32=$mingw_lib32 --with-default-msvcrt=msvcrt --with-default-win32-winnt=0x0600
 make
 make install
 
