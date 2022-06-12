@@ -14,7 +14,7 @@ The default GUI language is English. To use translations, select your language a
 
 ### Enable GeoIP
 
-With GeoIP aMule shows the country flags of peers. To enable GeoIP, you need to download the [GeoIP data file](https://mailfud.org/geoip-legacy/GeoIP.dat.gz), extract it and place it in aMule's configuration folder, which should be `C:\Users\<USER_NAME>\AppData\Roaming\aMule` in most cases. Then, enable the option "Show country flags for clients" at `Preferences->Interface`.
+GeoIP should be automatically enabled when you run aMule for the first time. If not enabled, ensure that the value of `GeoLiteCountryUpdateUrl` is https://mailfud.org/geoip-legacy/GeoIP.dat.gz in `amule.conf`, and enable the option "Show country flags for clients" at `Preferences->Interface`.
 
 ## Build from source
 
@@ -36,6 +36,10 @@ Checkout the repository
 
     git clone https://github.com/minnyres/amule-win32.git
     cd amule-win32
+    
+If you need to build aMule for Windows XP, switch to the `winxp` branch
+
+    git switch winxp
     
 Download and prepare the source code
 
