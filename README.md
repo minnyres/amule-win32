@@ -28,7 +28,7 @@ For openSUSE tumbleweed, install via `zypper`
 
 For Debian, install via `apt`
 
-    sudo apt install g++ autoconf automake make patch bison flex libtool git wget gettext texinfo p7zip-full pkg-config
+    sudo apt install g++ autoconf automake make patch bison flex libtool git wget gettext texinfo p7zip-full pkg-config autopoint
 
 ### Download
 
