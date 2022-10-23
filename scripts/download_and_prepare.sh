@@ -5,7 +5,7 @@ set -e
 mkdir -p $PWD/src
 cd $PWD/src
 
-wget http://zlib.net/zlib-1.2.12.tar.gz
+wget http://zlib.net/zlib-1.2.13.tar.gz
 wget http://cryptopp.com/cryptopp860.zip
 wget https://github.com/noloader/cryptopp-autotools/archive/refs/tags/CRYPTOPP_8_6_0.tar.gz -O cryptopp-autotools-CRYPTOPP_8_6_0.tar.gz
 wget http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.16.tar.gz
@@ -21,7 +21,7 @@ wget https://github.com/persmule/amule-dlp/archive/refs/heads/master.zip -O amul
 wget https://curl.se/download/curl-7.83.0.tar.xz
 wget https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v3.1.0.tar.gz -O mbedtls-3.1.0.tar.gz
 
-tar -xf zlib-1.2.12.tar.gz
+tar -xf zlib-1.2.13.tar.gz
 tar -xf libpng-1.6.37.tar.xz
 tar -xf libiconv-1.16.tar.gz
 tar -xf libupnp-1.14.12.tar.bz2
