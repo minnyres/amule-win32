@@ -2,7 +2,7 @@
 
 set -e
 
-cd src/mbedtls-3.1.0
+cd src/mbedtls
 
 patch -p1 <../../patches/mbedtls-fix-vsnprintf_on_winxp.patch
 

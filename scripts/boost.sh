@@ -2,7 +2,7 @@
 
 set -e
 
-cd src/boost_1_78_0
+cd src/boost
 
 cd tools/build/
 ./bootstrap.sh

@@ -2,7 +2,7 @@
 
 set -e
 
-cd src/libiconv-1.16
+cd src/libiconv
 mkdir -p build-$TARGET
 cd build-$TARGET
 ../configure --host=$TARGET --prefix=$BUILDDIR/libiconv --enable-static=yes --enable-shared=no

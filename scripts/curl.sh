@@ -8,7 +8,8 @@ else
     ssl_option="--with-mbedtls=$BUILDDIR/mbedtls --with-ca-bundle=./curl-ca-bundle.crt"
 fi
 
-cd src/curl-7.83.0
+cd src/curl
+autoreconf -fi
 mkdir -p build-$TARGET
 cd build-$TARGET
 ../configure --host=$TARGET --prefix=$BUILDDIR/curl --disable-debug --enable-optimize --enable-ipv6 \
