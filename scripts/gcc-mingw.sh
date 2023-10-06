@@ -44,7 +44,7 @@ wget https://jaist.dl.sourceforge.net/project/mingw-w64/mingw-w64/mingw-w64-rele
 cd $BUILDDIR/tmp
 tar -xf binutils-$BINUTILS_VERSION.tar.xz
 cd binutils-$BINUTILS_VERSION
-./configure CFLAGS="-g0 -Os" LDFLAGS="-s" --prefix=$BUILDDIR --target=$TARGET --with-sysroot=$BUILDDIR --disable-multilib
+./configure CFLAGS="-g0 -O2" LDFLAGS="-s" --prefix=$BUILDDIR --target=$TARGET --with-sysroot=$BUILDDIR --disable-multilib
 make -j$(nproc)
 make install
 
@@ -64,8 +64,8 @@ cd gcc-$GCC_VERSION
 
 mkdir -p build
 cd build
-../configure CFLAGS="-g0 -Os" CXXFLAGS="-g0 -Os" CFLAGS_FOR_TARGET="-g0 -Os" \
-    CXXFLAGS_FOR_TARGET="-g0 -Os" BOOT_CFLAGS="-g0 -Os" BOOT_CXXFLAGS="-g0 -Os" \
+../configure CFLAGS="-g0 -O2" CXXFLAGS="-g0 -O2" CFLAGS_FOR_TARGET="-g0 -O2" \
+    CXXFLAGS_FOR_TARGET="-g0 -O2" BOOT_CFLAGS="-g0 -O2" BOOT_CXXFLAGS="-g0 -O2" \
     LDFLAGS="-s" LDFLAGS_FOR_TARGET="-s" BOOT_LDFLAGS="-s" \
     --prefix=$BUILDDIR --target=$TARGET --with-sysroot=$BUILDDIR \
     --disable-multilib --disable-shared --enable-languages=c,c++ \
@@ -84,13 +84,13 @@ PATH=$BUILDDIR/bin:$PATH
 mkdir -p $BUILDDIR/$TARGET/lib
 ln -snf lib $BUILDDIR/$TARGET/lib64
 cd $BUILDDIR/tmp/mingw-w64-v$MINGW_VERSION/mingw-w64-crt/
-./configure CFLAGS="-g0 -Os" LDFLAGS="-s" --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-lib64=$mingw_lib64 --enable-lib32=$mingw_lib32 --with-default-msvcrt=msvcrt --with-default-win32-winnt=0x0502
+./configure CFLAGS="-g0 -O2" LDFLAGS="-s" --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-lib64=$mingw_lib64 --enable-lib32=$mingw_lib32 --with-default-msvcrt=msvcrt --with-default-win32-winnt=0x0502
 make
 make install
 
 # winpthreads
 cd $BUILDDIR/tmp/mingw-w64-v$MINGW_VERSION/mingw-w64-libraries/winpthreads/
-./configure CFLAGS="-g0 -Os" LDFLAGS="-s" --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-shared=no --enable-static
+./configure CFLAGS="-g0 -O2" LDFLAGS="-s" --prefix=$BUILDDIR/$TARGET --host=$TARGET --enable-shared=no --enable-static
 make -j$(nproc)
 make install
 
