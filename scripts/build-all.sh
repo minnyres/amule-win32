@@ -65,5 +65,5 @@ fi
 ./scripts/cryptopp-autotools.sh
 ./scripts/wxwidgets.sh
 ./scripts/boost.sh
-./scripts/amule-2.3.3.sh
+./scripts/amule.sh
 ./scripts/amule-dlp.sh
