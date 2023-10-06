@@ -2,7 +2,7 @@
 
 set -e
 
-cd src/mbedtls-3.1.0
+cd src/mbedtls
 
 export WINDOWS_BUILD=1
 export CC=$TARGET-gcc

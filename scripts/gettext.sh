@@ -2,7 +2,7 @@
 
 set -e
 
-cd src/gettext-0.21
+cd src/gettext
 mkdir -p build-$TARGET
 cd build-$TARGET
 ../configure CPPFLAGS="-I$BUILDDIR/libiconv/include" LDFLAGS="-L$BUILDDIR/libiconv/lib" \

@@ -12,7 +12,8 @@ else
     denoise_level=4
 fi
 
-cd src/aMule-2.3.3
+cd src/amule
+amule_version=$(git describe --tags --abbrev=0)
 
 patch -p1 <../../patches/amule-fix-curl_with_tls.patch
 patch -p1 <../../patches/amule-fix-geoip_url.patch
@@ -44,13 +45,8 @@ make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lws2_32" BOOST_SY
 make install
 make clean
 
-patch -p1 -R <../../patches/amule-fix-boost_llvm.patch
-patch -p1 -R <../../patches/amule-fix-unzip.patch
-patch -p0 -R <../../patches/amule-fix-exception.patch
-patch -p0 -R <../../patches/amule-fix-wchar_t.patch
-patch -p0 -R <../../patches/amule-fix-upnp_cross_compile.patch
-patch -p1 -R <../../patches/amule-fix-geoip_url.patch
-patch -p1 -R <../../patches/amule-fix-curl_with_tls.patch
+git restore .
+git clean -f
 
 $TARGET-strip $BUILDDIR/amule/bin/*.exe
 
@@ -60,5 +56,5 @@ cp -r $BUILDDIR/amule/share/locale/ amule
 cp -r $BUILDDIR/amule/share/amule/* amule
 mkdir -p amule/docs
 cp $BUILDDIR/amule/share/doc/amule/* amule/docs
-7z a -mx9 amule-2.3.3-$ARCH.7z amule
+7z a -mx9 amule-${amule_version}-$ARCH.7z amule
 rm -rf amule

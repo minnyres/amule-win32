@@ -13,7 +13,7 @@ else
 fi
 
 # amule-dlp
-cd src/amule-dlp-master
+cd src/amule-dlp
 
 patch -p1 <../../patches/amule-fix-curl_with_tls.patch
 patch -p1 <../../patches/amule-fix-geoip_url.patch
@@ -46,18 +46,12 @@ make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lws2_32" BOOST_SY
 make install
 make clean
 
-patch -p1 -R <../../patches/amule-fix-boost_llvm.patch
-patch -p1 -R <../../patches/amule-fix-dlp.patch
-patch -p1 -R <../../patches/amule-fix-unzip.patch
-patch -p0 -R <../../patches/amule-fix-exception.patch
-patch -p0 -R <../../patches/amule-fix-wchar_t.patch
-patch -p0 -R <../../patches/amule-fix-upnp_cross_compile.patch
-patch -p1 -R <../../patches/amule-fix-geoip_url.patch
-patch -p1 -R <../../patches/amule-fix-curl_with_tls.patch
+git restore .
+git clean -f
 
 # libantileech
 
-cd ../amule-dlp.antiLeech-master
+cd ../amule-dlp.antiLeech
 patch -p1 <../../patches/amule-fix-libantiLeech.patch
 PATH=$BUILDDIR/wxwidgets/bin:$PATH
 $TARGET-g++ -g0 -Os -s -static -fPIC -shared antiLeech.cpp antiLeech_wx.cpp Interface.cpp -o antileech.dll $(wx-config --cppflags) $(wx-config --libs)

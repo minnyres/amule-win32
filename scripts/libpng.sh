@@ -2,7 +2,7 @@
 
 set -e
 
-cd src/libpng-1.6.37
+cd src/libpng
 mkdir -p build-$TARGET
 cd build-$TARGET
 ../configure CPPFLAGS="-I$BUILDDIR/zlib/include" LDFLAGS="-L$BUILDDIR/zlib/lib" \

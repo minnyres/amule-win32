@@ -2,7 +2,7 @@
 
 set -e
 
-cd src/wxWidgets-3.0.5
+cd src/wxWidgets
 mkdir -p build-$TARGET
 cd build-$TARGET
 ../configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include" \
