@@ -18,7 +18,7 @@ git clone --branch 2.3.3 --depth 1 https://github.com/amule-project/amule.git
 git clone --branch CRYPTOPP_8_8_0 --depth 1 https://github.com/weidai11/cryptopp.git
 git clone --branch CRYPTOPP_8_8_0 --depth 1 https://github.com/noloader/cryptopp-autotools.git
 git clone --depth 1 https://github.com/persmule/amule-dlp.antiLeech.git
-git clone --depth 1 https://github.com/persmule/amule-dlp.git
+git clone https://github.com/persmule/amule-dlp.git
 git clone --depth 1 https://github.com/maxmind/geoip-api-c.git
 
 wget https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.7z -O boost.7z
@@ -37,3 +37,6 @@ cp ../cryptopp-autotools/configure.ac .
 cp ../cryptopp-autotools/libcryptopp.pc.in .
 cp ../cryptopp-autotools/bootstrap.sh .
 mkdir -p m4
+
+cd ../amule-dlp
+git checkout 62eb92fc6cf5f28da24bcc78a80e22d608240aa2

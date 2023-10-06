@@ -1,0 +1,49 @@
+name: Build for Windows on ARM
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+    - '*'
+
+jobs:
+  build-windows-arm64:
+    name: Build
+    runs-on: ubuntu-latest
+        
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install tools
+        run: |
+          sudo apt update
+          sudo apt install \
+            g++ autoconf automake make patch bison flex libtool git wget gettext texinfo p7zip-full pkg-config autopoint          
+          wget https://github.com/mstorsjo/llvm-mingw/releases/download/20220906/llvm-mingw-20220906-ucrt-ubuntu-18.04-x86_64.tar.xz
+          tar xf llvm-mingw-*.tar.xz
+          rm llvm-mingw-*.tar.xz
+          mkdir -p toolchain
+          mv llvm-mingw-* toolchain/clang
+          wget https://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.xz
+          tar xf autoconf-2.69.tar.xz
+          cd autoconf-2.69
+          ./configure --prefix=/usr/local/autoconf
+          make && sudo make install
+          
+      - name: Build aMule
+        run: |
+          export PATH=/usr/local/autoconf/bin:$PATH
+          ./scripts/download_and_prepare.sh
+          ./scripts/build-all.sh -arch=arm32 -cc=clang
+          
+      - name: Prepare build artifacts
+        run: |
+          mkdir -p upload
+          mv amule*.7z upload
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: amule_windows_arm
+          path: upload
