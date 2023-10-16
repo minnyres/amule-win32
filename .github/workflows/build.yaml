@@ -1,4 +1,4 @@
-name: Build for Windows on ARM
+name: Build for Windows
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
     - '*'
 
 jobs:
-  build-windows-arm64:
+  build-windows:
     name: Build
     runs-on: ubuntu-latest
         
@@ -30,13 +30,26 @@ jobs:
           cd autoconf-2.69
           ./configure --prefix=/usr/local/autoconf
           make && sudo make install
+
+      - name: Cache MinGW gCC
+        id: cache-mingw-gcc
+        uses: actions/cache@v3
+        with:
+          path: toolchain/mingw32
+          key: ${{ runner.os }}-mingw-gcc
+
+      - name: Build MinGW GCC
+        if: steps.cache-mingw-gcc.outputs.cache-hit != 'true'
+        run: ./scripts/gcc-mingw.sh -arch=x86
           
       - name: Build aMule
         run: |
           export PATH=/usr/local/autoconf/bin:$PATH
+          export amule_version=2.3.3.5
           ./scripts/download_and_prepare.sh
+          ./scripts/build-all.sh -arch=x86 -cc=gcc
           ./scripts/build-all.sh -arch=arm32 -cc=clang
-          
+                  
       - name: Prepare build artifacts
         run: |
           mkdir -p upload
@@ -45,5 +58,5 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: amule_windows_arm
+          name: amule_windows
           path: upload

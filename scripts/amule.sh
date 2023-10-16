@@ -13,7 +13,7 @@ else
 fi
 
 cd src/amule
-amule_version=$(git describe --tags --abbrev=0)
+[ -z "$amule_version" ] && amule_version=$(git describe --tags --abbrev=0)
 
 patch -p1 <../../patches/amule-fix-curl_with_tls.patch
 patch -p1 <../../patches/amule-fix-geoip_url.patch
