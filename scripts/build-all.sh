@@ -7,7 +7,7 @@ help_msg="Usage: ./scripts/build-all.sh -arch=[x86|arm32] -cc=[gcc|clang]"
 if [ $# == 2 ]; then
     for option in "$@"; do
         if [ $option == "-arch=x86" ]; then
-            ARCH=win32
+            ARCH=win32-WinXP
         elif [ $option == "-arch=arm32" ]; then
             ARCH=win32-arm
         elif [ $option == "-cc=gcc" ]; then
@@ -30,7 +30,7 @@ else
     PATH=$PWD/toolchain/mingw32/bin/:$PATH
 fi
 
-if [ "$ARCH" == "win32" ]; then
+if [ "$ARCH" == "win32-WinXP" ]; then
     TARGET=i686-w64-mingw32
 elif [ "$ARCH" == "win32-arm" ]; then
     TARGET=armv7-w64-mingw32
