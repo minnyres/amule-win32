@@ -1,13 +1,13 @@
 diff --git a/library/platform.c b/library/platform.c
-index e742fde..8379b0f 100644
+index b15b7b2..bf87ba3 100644
 --- a/library/platform.c
 +++ b/library/platform.c
-@@ -132,7 +132,7 @@ int mbedtls_platform_win32_vsnprintf( char *s, size_t n, const char *fmt, va_lis
-     if( s == NULL || n == 0 || fmt == NULL )
-         return( -1 );
+@@ -133,7 +133,7 @@ int mbedtls_platform_win32_vsnprintf(char *s, size_t n, const char *fmt, va_list
+         return -1;
+     }
  
 -#if defined(_TRUNCATE)
 +#if defined(_TRUNCATE) && !defined(__MINGW32__)
-     ret = vsnprintf_s( s, n, _TRUNCATE, fmt, arg );
+     ret = vsnprintf_s(s, n, _TRUNCATE, fmt, arg);
  #else
-     ret = vsnprintf( s, n, fmt, arg );
+     ret = vsnprintf(s, n, fmt, arg);
