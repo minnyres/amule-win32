@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-windows:
-    name: Build
+    name: Build for Windows
     runs-on: ubuntu-latest
         
     steps:
@@ -62,7 +62,7 @@ jobs:
           path: upload
 
   build-windows-xp:
-    name: Build
+    name: Build for Windows XP
     runs-on: ubuntu-latest
         
     steps:
@@ -110,3 +110,26 @@ jobs:
         with:
           name: amule_windows
           path: upload
+
+  release:
+    name: Release
+    needs: [build-windows, build-windows-xp] 
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: Download temp artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: amule_windows
+     
+      - name: Calculate hashes
+        run: |
+          sha256sum *.7z
+
+      - name: Batch release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: ./*.7z
