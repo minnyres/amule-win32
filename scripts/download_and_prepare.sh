@@ -10,7 +10,7 @@ gettext_version=0.22.2
 
 git clone --branch v1.3 --depth 1 https://github.com/madler/zlib.git 
 git clone --branch v1.6.40 --depth 1 https://github.com/glennrp/libpng.git
-git clone --branch release-1.14.18 --depth 1 https://github.com/pupnp/pupnp.git
+git clone --branch release-1.14.12 --depth 1 https://github.com/pupnp/pupnp.git
 git clone --branch v3.4.1 --depth 1 https://github.com/Mbed-TLS/mbedtls.git
 git clone --branch curl-8_3_0 --depth 1 https://github.com/curl/curl.git
 git clone --branch v3.0.5.1 --depth 1 https://github.com/wxWidgets/wxWidgets.git
