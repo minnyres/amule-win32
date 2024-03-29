@@ -37,10 +37,6 @@ Checkout the repository
     git clone https://github.com/minnyres/amule-win32.git
     cd amule-win32
     
-If you need to build aMule for Windows XP, switch to the `winxp` branch
-
-    git switch winxp
-    
 Download and prepare the source code
 
     ./scripts/download_and_prepare.sh
