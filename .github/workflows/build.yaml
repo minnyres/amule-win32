@@ -49,86 +49,22 @@ jobs:
           ./scripts/download_and_prepare.sh
           ./scripts/build-all.sh -arch=x86 -cc=gcc
           ./scripts/build-all.sh -arch=arm32 -cc=clang
+          sha256sum *.7z          
                   
       - name: Prepare build artifacts
         run: |
           mkdir -p upload
-          mv amule*.7z upload
+          cp amule*.7z upload
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: amule_windows
           path: upload
-
-  build-windows-xp:
-    name: Build for Windows XP
-    runs-on: ubuntu-latest
-        
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with: 
-          ref: winxp
-
-      - name: Install tools
-        run: |
-          sudo apt update
-          sudo apt install \
-            g++ autoconf automake make patch bison flex libtool git wget gettext texinfo p7zip-full pkg-config autopoint          
-          wget https://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.xz
-          tar xf autoconf-2.69.tar.xz
-          cd autoconf-2.69
-          ./configure --prefix=/usr/local/autoconf
-          make && sudo make install
-
-      - name: Cache MinGW GCC
-        id: cache-mingw-gcc-xp
-        uses: actions/cache@v3
-        with:
-          path: toolchain/mingw32
-          key: ${{ runner.os }}-mingw-gcc-xp
-
-      - name: Build MinGW GCC
-        if: steps.cache-mingw-gcc-xp.outputs.cache-hit != 'true'
-        run: ./scripts/gcc-mingw.sh -arch=x86
-          
-      - name: Build aMule
-        run: |
-          export PATH=/usr/local/autoconf/bin:$PATH
-          export amule_version=2.3.3.5
-          ./scripts/download_and_prepare.sh
-          ./scripts/build-all.sh -arch=x86 -cc=gcc
-                  
-      - name: Prepare build artifacts
-        run: |
-          mkdir -p upload
-          mv amule*.7z upload
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: amule_windows
-          path: upload
-
-  release:
-    name: Release
-    needs: [build-windows, build-windows-xp] 
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
-
-    steps:
-      - name: Download temp artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: amule_windows
-     
-      - name: Calculate hashes
-        run: |
-          sha256sum *.7z
 
       - name: Batch release
         uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
