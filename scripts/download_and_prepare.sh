@@ -37,6 +37,3 @@ cp ../cryptopp-autotools/configure.ac .
 cp ../cryptopp-autotools/libcryptopp.pc.in .
 cp ../cryptopp-autotools/bootstrap.sh .
 mkdir -p m4
-
-cd ../amule-dlp
-git checkout 62eb92fc6cf5f28da24bcc78a80e22d608240aa2

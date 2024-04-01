@@ -21,6 +21,7 @@ patch -p0 <../../patches/amule-fix-upnp_cross_compile.patch
 patch -p0 <../../patches/amule-fix-exception.patch
 patch -p1 <../../patches/amule-fix-unzip.patch
 patch -p1 <../../patches/amule-fix-boost_llvm.patch
+patch -p1 <../../patches/0001-Apply-the-patch-for-wx-3.2-support-customized-by-deb.patch
 
 ./autogen.sh
 ./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -DHAVE_LIBCURL -D_UNICODE=1 -DUNICODE=1" \
