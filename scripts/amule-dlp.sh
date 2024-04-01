@@ -18,14 +18,13 @@ cd src/amule-dlp
 patch -p1 <../../patches/amule-fix-curl_with_tls.patch
 patch -p1 <../../patches/amule-fix-geoip_url.patch
 patch -p0 <../../patches/amule-fix-upnp_cross_compile.patch
-patch -p0 <../../patches/amule-fix-wchar_t.patch
 patch -p0 <../../patches/amule-fix-exception.patch
 patch -p1 <../../patches/amule-fix-unzip.patch
 patch -p1 <../../patches/amule-fix-dlp.patch
 patch -p1 <../../patches/amule-fix-boost_llvm.patch
 
 ./autogen.sh
-./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -DHAVE_LIBCURL" \
+./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -DHAVE_LIBCURL -D_UNICODE=1 -DUNICODE=1" \
     LDFLAGS="-L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib" \
     CXXFLAGS="-DCURL_STATICLIB" CFLAGS="-DCURL_STATICLIB" \
     --prefix=$BUILDDIR/amule-dlp --host=$TARGET \
@@ -42,7 +41,7 @@ patch -p1 <../../patches/amule-fix-boost_llvm.patch
     --enable-static-boost --with-boost=$BUILDDIR/boost \
     --with-libupnp-prefix=$BUILDDIR/libupnp --with-denoise-level=$denoise_level --enable-ccache
 
-make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lws2_32" BOOST_SYSTEM_LDFLAGS="-L$BUILDDIR/boost/lib" -j$(nproc)
+make BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lwsock32 -lws2_32" BOOST_SYSTEM_LDFLAGS="-L$BUILDDIR/boost/lib" -j$(nproc)
 make install
 make clean
 

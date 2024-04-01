@@ -13,7 +13,7 @@ git clone --branch v1.6.40 --depth 1 https://github.com/glennrp/libpng.git
 git clone --branch release-1.14.18 --depth 1 https://github.com/pupnp/pupnp.git
 git clone --branch v3.4.1 --depth 1 https://github.com/Mbed-TLS/mbedtls.git
 git clone --branch curl-8_3_0 --depth 1 https://github.com/curl/curl.git
-git clone --branch v3.0.5.1 --depth 1 https://github.com/wxWidgets/wxWidgets.git
+git clone --branch v3.2.4 --recurse-submodules --depth 1 https://github.com/wxWidgets/wxWidgets.git
 git clone --branch 2.3.3 --depth 1 https://github.com/amule-project/amule.git
 git clone --branch CRYPTOPP_8_8_0 --depth 1 https://github.com/weidai11/cryptopp.git
 git clone --branch CRYPTOPP_8_8_0 --depth 1 https://github.com/noloader/cryptopp-autotools.git
