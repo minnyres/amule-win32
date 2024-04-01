@@ -1,10 +1,7 @@
 name: Build for Windows
 
 on:
-  workflow_dispatch:
   push:
-    tags:
-    - '*'
 
 jobs:
   build-windows:
@@ -20,7 +17,7 @@ jobs:
           sudo apt update
           sudo apt install \
             g++ autoconf automake make patch bison flex libtool git wget gettext texinfo p7zip-full pkg-config autopoint          
-          wget https://github.com/mstorsjo/llvm-mingw/releases/download/20220906/llvm-mingw-20220906-ucrt-ubuntu-18.04-x86_64.tar.xz
+          wget https://github.com/mstorsjo/llvm-mingw/releases/download/20240320/llvm-mingw-20240320-ucrt-ubuntu-20.04-x86_64.tar.xz
           tar xf llvm-mingw-*.tar.xz
           rm llvm-mingw-*.tar.xz
           mkdir -p toolchain
@@ -45,7 +42,7 @@ jobs:
       - name: Build aMule
         run: |
           export PATH=/usr/local/autoconf/bin:$PATH
-          export amule_version=2.3.3.5
+          export amule_version=2.3.3-6
           ./scripts/download_and_prepare.sh
           ./scripts/build-all.sh -arch=x86 -cc=gcc
           ./scripts/build-all.sh -arch=arm32 -cc=clang
