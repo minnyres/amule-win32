@@ -24,7 +24,7 @@ patch -p1 <../../patches/amule-fix-dlp.patch
 patch -p1 <../../patches/amule-fix-boost_llvm.patch
 
 ./autogen.sh
-./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -DHAVE_LIBCURL -D_UNICODE=1 -DUNICODE=1" \
+./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -DHAVE_LIBCURL -Wno-error=register -D_UNICODE=1 -DUNICODE=1" \
     LDFLAGS="-L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib" \
     CXXFLAGS="-DCURL_STATICLIB" CFLAGS="-DCURL_STATICLIB" \
     --prefix=$BUILDDIR/amule-dlp --host=$TARGET \

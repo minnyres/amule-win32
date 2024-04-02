@@ -1,0 +1,464 @@
+From 99bc43cefeccbacc6c7654d91019789eb9868ff7 Mon Sep 17 00:00:00 2001
+From: Lauri Nurmi <lanurmi@iki.fi>
+Date: Mon, 15 Jan 2024 23:02:16 +0200
+Subject: [PATCH] Introduce minimal MSW ARM support
+
+wxMSW could already be compiled for ARM with MSVC, but due to not
+defining any ARCH_SUFFIX for ARM, makefile.vc used to place objectsi
+and libraries to the same folder as x86 objects and libraries.
+
+A completely different question is what kind of Windows runs on 32-bit
+ARM, and whether one can run regular desktop apps on it.
+
+This commit mimics what f69dbaa1 did for ARM64, and adapts it for ARM.
+
+Closes #24222.
+---
+ .gitignore                 | 54 ++++++++++++++++++++++++++++++++++++++
+ build/bakefiles/common.bkl |  4 +++
+ build/bakefiles/config.bkl |  2 +-
+ build/cmake/init.cmake     |  4 +++
+ build/msw/config.vc        |  2 +-
+ build/msw/makefile.vc      | 12 +++++++++
+ build/msw/wx_setup.props   |  3 +++
+ docs/msw/install.md        |  2 +-
+ include/msvc/wx/setup.h    |  2 ++
+ src/msw/stackwalk.cpp      | 12 ++++++++-
+ src/msw/stdpaths.cpp       |  1 +
+ 11 files changed, 94 insertions(+), 4 deletions(-)
+
+diff --git a/.gitignore b/.gitignore
+index 2cd7359aab94..aa9d475cdd0a 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -25,45 +25,59 @@
+ /build/msw/makefile.dmc
+ /build/msw/*c*_msw
+ /build/msw/*c*_msw_x64
++/build/msw/*c*_msw_arm
+ /build/msw/*c*_msw_arm64
+ /build/msw/*c*_msw[du]
+ /build/msw/*c*_msw[du]_x64
++/build/msw/*c*_msw[du]_arm
+ /build/msw/*c*_msw[du]_arm64
+ /build/msw/*c*_mswud
+ /build/msw/*c*_mswud_x64
++/build/msw/*c*_mswud_arm
+ /build/msw/*c*_mswud_arm64
+ /build/msw/*c*_mswdll
+ /build/msw/*c*_mswdll_x64
++/build/msw/*c*_mswdll_arm
+ /build/msw/*c*_mswdll_arm64
+ /build/msw/*c*_msw[du]dll
+ /build/msw/*c*_msw[du]dll_x64
++/build/msw/*c*_msw[du]dll_arm
+ /build/msw/*c*_msw[du]dll_arm64
+ /build/msw/*c*_mswuddll
+ /build/msw/*c*_mswuddll_x64
++/build/msw/*c*_mswuddll_arm
+ /build/msw/*c*_mswuddll_arm64
+ /build/msw/*c*_mswuniv
+ /build/msw/*c*_mswuniv_x64
++/build/msw/*c*_mswuniv_arm
+ /build/msw/*c*_mswuniv_arm64
+ /build/msw/*c*_mswuniv[du]
+ /build/msw/*c*_mswuniv[du]_x64
++/build/msw/*c*_mswuniv[du]_arm
+ /build/msw/*c*_mswuniv[du]_arm64
+ /build/msw/*c*_mswunivud
+ /build/msw/*c*_mswunivud_x64
++/build/msw/*c*_mswunivud_arm
+ /build/msw/*c*_mswunivud_arm64
+ /build/msw/*c*_mswunivdll
+ /build/msw/*c*_mswunivdll_x64
++/build/msw/*c*_mswunivdll_arm
+ /build/msw/*c*_mswunivdll_arm64
+ /build/msw/*c*_mswuniv[du]dll
+ /build/msw/*c*_mswuniv[du]dll_x64
++/build/msw/*c*_mswuniv[du]dll_arm
+ /build/msw/*c*_mswuniv[du]dll_arm64
+ /build/msw/*c*_mswunivuddll
+ /build/msw/*c*_mswunivuddll_x64
++/build/msw/*c*_mswunivuddll_arm
+ /build/msw/*c*_mswunivuddll_arm64
+ /build/msw/*c*_mswhdll
+ /build/msw/*c*_mswhdll_x64
++/build/msw/*c*_mswhdll_arm
+ /build/msw/*c*_mswhdll_arm64
+ /build/msw/*c*_mswuhdll
+ /build/msw/*c*_mswuhdll_x64
++/build/msw/*c*_mswuhdll_arm
+ /build/msw/*c*_mswuhdll_arm64
+ /build/msw/wx_local.props
+ 
+@@ -91,39 +105,51 @@
+ /demos/*/*.sln
+ /demos/*/*c*_msw
+ /demos/*/*c*_msw_x64
++/demos/*/*c*_msw_arm
+ /demos/*/*c*_msw_arm64
+ /demos/*/*c*_msw[du]
+ /demos/*/*c*_msw[du]_x64
++/demos/*/*c*_msw[du]_arm
+ /demos/*/*c*_msw[du]_arm64
+ /demos/*/*c*_mswud
+ /demos/*/*c*_mswud_x64
++/demos/*/*c*_mswud_arm
+ /demos/*/*c*_mswud_arm64
+ /demos/*/*c*_mswdll
+ /demos/*/*c*_mswdll_x64
++/demos/*/*c*_mswdll_arm
+ /demos/*/*c*_mswdll_arm64
+ /demos/*/*c*_msw[du]dll
+ /demos/*/*c*_msw[du]dll_x64
++/demos/*/*c*_msw[du]dll_arm
+ /demos/*/*c*_msw[du]dll_arm64
+ /demos/*/*c*_mswuddll
+ /demos/*/*c*_mswuddll_x64
++/demos/*/*c*_mswuddll_arm
+ /demos/*/*c*_mswuddll_arm64
+ /demos/*/*c*_mswuniv
+ /demos/*/*c*_mswuniv_x64
++/demos/*/*c*_mswuniv_arm
+ /demos/*/*c*_mswuniv_arm64
+ /demos/*/*c*_mswuniv[du]
+ /demos/*/*c*_mswuniv[du]_x64
++/demos/*/*c*_mswuniv[du]_arm
+ /demos/*/*c*_mswuniv[du]_arm64
+ /demos/*/*c*_mswunivud
+ /demos/*/*c*_mswunivud_x64
++/demos/*/*c*_mswunivud_arm
+ /demos/*/*c*_mswunivud_arm64
+ /demos/*/*c*_mswunivdll
+ /demos/*/*c*_mswunivdll_x64
++/demos/*/*c*_mswunivdll_arm
+ /demos/*/*c*_mswunivdll_arm64
+ /demos/*/*c*_mswuniv[du]dll
+ /demos/*/*c*_mswuniv[du]dll_x64
++/demos/*/*c*_mswuniv[du]dll_arm
+ /demos/*/*c*_mswuniv[du]dll_arm64
+ /demos/*/*c*_mswunivuddll
+ /demos/*/*c*_mswunivuddll_x64
++/demos/*/*c*_mswunivuddll_arm
+ /demos/*/*c*_mswunivuddll_arm64
+ /demos/*/*Classic?Debug*
+ /demos/*/*Classic?Release*
+@@ -240,39 +266,51 @@
+ # /samples/
+ /samples/**/*c*_msw
+ /samples/**/*c*_msw_x64
++/samples/**/*c*_msw_arm
+ /samples/**/*c*_msw_arm64
+ /samples/**/*c*_msw[du]
+ /samples/**/*c*_msw[du]_x64
++/samples/**/*c*_msw[du]_arm
+ /samples/**/*c*_msw[du]_arm64
+ /samples/**/*c*_mswud
+ /samples/**/*c*_mswud_x64
++/samples/**/*c*_mswud_arm
+ /samples/**/*c*_mswud_arm64
+ /samples/**/*c*_mswdll
+ /samples/**/*c*_mswdll_x64
++/samples/**/*c*_mswdll_arm
+ /samples/**/*c*_mswdll_arm64
+ /samples/**/*c*_msw[du]dll
+ /samples/**/*c*_msw[du]dll_x64
++/samples/**/*c*_msw[du]dll_arm
+ /samples/**/*c*_msw[du]dll_arm64
+ /samples/**/*c*_mswuddll
+ /samples/**/*c*_mswuddll_x64
++/samples/**/*c*_mswuddll_arm
+ /samples/**/*c*_mswuddll_arm64
+ /samples/**/*c*_mswuniv
+ /samples/**/*c*_mswuniv_x64
++/samples/**/*c*_mswuniv_arm
+ /samples/**/*c*_mswuniv_arm64
+ /samples/**/*c*_mswuniv[du]
+ /samples/**/*c*_mswuniv[du]_x64
++/samples/**/*c*_mswuniv[du]_arm
+ /samples/**/*c*_mswuniv[du]_arm64
+ /samples/**/*c*_mswunivud
+ /samples/**/*c*_mswunivud_x64
++/samples/**/*c*_mswunivud_arm
+ /samples/**/*c*_mswunivud_arm64
+ /samples/**/*c*_mswunivdll
+ /samples/**/*c*_mswunivdll_x64
++/samples/**/*c*_mswunivdll_arm
+ /samples/**/*c*_mswunivdll_arm64
+ /samples/**/*c*_mswuniv[du]dll
+ /samples/**/*c*_mswuniv[du]dll_x64
++/samples/**/*c*_mswuniv[du]dll_arm
+ /samples/**/*c*_mswuniv[du]dll_arm64
+ /samples/**/*c*_mswunivuddll
+ /samples/**/*c*_mswunivuddll_x64
++/samples/**/*c*_mswunivuddll_arm
+ /samples/**/*c*_mswunivuddll_arm64
+ 
+ # /samples/image/
+@@ -326,39 +364,51 @@
+ # /tests/
+ /tests/*c*_msw
+ /tests/*c*_msw_x64
++/tests/*c*_msw_arm
+ /tests/*c*_msw_arm64
+ /tests/*c*_msw[du]
+ /tests/*c*_msw[du]_x64
++/tests/*c*_msw[du]_arm
+ /tests/*c*_msw[du]_arm64
+ /tests/*c*_mswud
+ /tests/*c*_mswud_x64
++/tests/*c*_mswud_arm
+ /tests/*c*_mswud_arm64
+ /tests/*c*_mswdll
+ /tests/*c*_mswdll_x64
++/tests/*c*_mswdll_arm
+ /tests/*c*_mswdll_arm64
+ /tests/*c*_msw[du]dll
+ /tests/*c*_msw[du]dll_x64
++/tests/*c*_msw[du]dll_arm
+ /tests/*c*_msw[du]dll_arm64
+ /tests/*c*_mswuddll
+ /tests/*c*_mswuddll_x64
++/tests/*c*_mswuddll_arm
+ /tests/*c*_mswuddll_arm64
+ /tests/*c*_mswuniv
+ /tests/*c*_mswuniv_x64
++/tests/*c*_mswuniv_arm
+ /tests/*c*_mswuniv_arm64
+ /tests/*c*_mswuniv[du]
+ /tests/*c*_mswuniv[du]_x64
++/tests/*c*_mswuniv[du]_arm
+ /tests/*c*_mswuniv[du]_arm64
+ /tests/*c*_mswunivud
+ /tests/*c*_mswunivud_x64
++/tests/*c*_mswunivud_arm
+ /tests/*c*_mswunivud_arm64
+ /tests/*c*_mswunivdll
+ /tests/*c*_mswunivdll_x64
++/tests/*c*_mswunivdll_arm
+ /tests/*c*_mswunivdll_arm64
+ /tests/*c*_mswuniv[du]dll
+ /tests/*c*_mswuniv[du]dll_x64
++/tests/*c*_mswuniv[du]dll_arm
+ /tests/*c*_mswuniv[du]dll_arm64
+ /tests/*c*_mswunivuddll
+ /tests/*c*_mswunivuddll_x64
++/tests/*c*_mswunivuddll_arm
+ /tests/*c*_mswunivuddll_arm64
+ /tests/test.opt
+ /tests/test*.dsw
+@@ -372,15 +422,19 @@
+ # /utils/
+ /utils/**/*c*_mswu
+ /utils/**/*c*_mswu_x64
++/utils/**/*c*_mswu_arm
+ /utils/**/*c*_mswu_arm64
+ /utils/**/*c*_mswud
+ /utils/**/*c*_mswud_x64
++/utils/**/*c*_mswud_arm
+ /utils/**/*c*_mswud_arm64
+ /utils/**/*c*_mswudll
+ /utils/**/*c*_mswudll_x64
++/utils/**/*c*_mswudll_arm
+ /utils/**/*c*_mswudll_arm64
+ /utils/**/*c*_mswuddll
+ /utils/**/*c*_mswuddll_x64
++/utils/**/*c*_mswuddll_arm
+ /utils/**/*c*_mswuddll_arm64
+ 
+ # /utils/emulator/src/
+diff --git a/build/bakefiles/common.bkl b/build/bakefiles/common.bkl
+index 5290ca71909b..14ec10feee43 100644
+--- a/build/bakefiles/common.bkl
++++ b/build/bakefiles/common.bkl
+@@ -37,6 +37,8 @@
+         <if cond="FORMAT=='msvs2008prj' and MSVS_PLATFORM=='win64'">_x64</if>
+         <if cond="TARGET_CPU=='amd64'">_x64</if>
+         <if cond="TARGET_CPU=='AMD64'">_x64</if>
++        <if cond="TARGET_CPU=='arm'">_arm</if>
++        <if cond="TARGET_CPU=='ARM'">_arm</if>
+         <if cond="TARGET_CPU=='arm64'">_arm64</if>
+         <if cond="TARGET_CPU=='ARM64'">_arm64</if>
+         <if cond="TARGET_CPU=='ia64'">_ia64</if>
+@@ -315,6 +317,8 @@
+     <set var="LINK_TARGET_CPU">
+         <if cond="TARGET_CPU=='amd64'">/MACHINE:X64</if>
+         <if cond="TARGET_CPU=='AMD64'">/MACHINE:X64</if>
++        <if cond="TARGET_CPU=='arm'">/MACHINE:ARM</if>
++        <if cond="TARGET_CPU=='ARM'">/MACHINE:ARM</if>
+         <if cond="TARGET_CPU=='arm64'">/MACHINE:ARM64</if>
+         <if cond="TARGET_CPU=='ARM64'">/MACHINE:ARM64</if>
+         <if cond="TARGET_CPU=='ia64'">/MACHINE:IA64</if>
+diff --git a/build/bakefiles/config.bkl b/build/bakefiles/config.bkl
+index 3963e7e3f3a4..f9020d525c98 100644
+--- a/build/bakefiles/config.bkl
++++ b/build/bakefiles/config.bkl
+@@ -111,7 +111,7 @@ your environment is set up appropriately with the correct compiler in the
+ PATH. Rather it affects some options passed to some of the common build
+ utilities such as the resource compiler and the linker.
+ 
+-Accepted values: IA64, X64, ARM64
++Accepted values: IA64, X64, ARM, ARM64
+ (AMD64 accepted as synonym for X64 but should not be used any more).
+             </description>
+         </option>
+diff --git a/build/cmake/init.cmake b/build/cmake/init.cmake
+index 5faa49a8065d..8208dd0d69e2 100644
+--- a/build/cmake/init.cmake
++++ b/build/cmake/init.cmake
+@@ -135,12 +135,16 @@ set(wxPLATFORM_ARCH)
+ if(CMAKE_GENERATOR_PLATFORM)
+     if (CMAKE_GENERATOR_PLATFORM STREQUAL "x64")
+         set(wxPLATFORM_ARCH "x64")
++    elseif(CMAKE_GENERATOR_PLATFORM STREQUAL "ARM")
++        set(wxPLATFORM_ARCH "arm")
+     elseif(CMAKE_GENERATOR_PLATFORM STREQUAL "ARM64")
+         set(wxPLATFORM_ARCH "arm64")
+     endif()
+ elseif(CMAKE_VS_PLATFORM_NAME)
+     if (CMAKE_VS_PLATFORM_NAME STREQUAL "x64")
+         set(wxPLATFORM_ARCH "x64")
++    elseif(CMAKE_VS_PLATFORM_NAME STREQUAL "ARM")
++        set(wxPLATFORM_ARCH "arm")
+     elseif(CMAKE_VS_PLATFORM_NAME STREQUAL "ARM64")
+         set(wxPLATFORM_ARCH "arm64")
+     endif()
+diff --git a/build/msw/config.vc b/build/msw/config.vc
+index ca187ea7f3ce..ea4b538b086d 100644
+--- a/build/msw/config.vc
++++ b/build/msw/config.vc
+@@ -49,7 +49,7 @@ BUILD = debug
+ # PATH. Rather it affects some options passed to some of the common build
+ # utilities such as the resource compiler and the linker.
+ # 
+-# Accepted values: IA64, X64, ARM64
++# Accepted values: IA64, X64, ARM, ARM64
+ # (AMD64 accepted as synonym for X64 but should not be used any more). 
+ TARGET_CPU = $(CPU)
+ 
+diff --git a/build/msw/makefile.vc b/build/msw/makefile.vc
+index 3efead9883b8..ea76fd294551 100644
+--- a/build/msw/makefile.vc
++++ b/build/msw/makefile.vc
+@@ -1873,6 +1873,9 @@ BUILD_CFG_FILE = $(SETUPHDIR)\build.cfg
+ !if "$(TARGET_CPU)" == "AMD64"
+ ARCH_SUFFIX = _x64
+ !endif
++!if "$(TARGET_CPU)" == "ARM"
++ARCH_SUFFIX = _arm
++!endif
+ !if "$(TARGET_CPU)" == "ARM64"
+ ARCH_SUFFIX = _arm64
+ !endif
+@@ -1891,6 +1894,9 @@ ARCH_SUFFIX = _x64
+ !if "$(TARGET_CPU)" == "amd64"
+ ARCH_SUFFIX = _x64
+ !endif
++!if "$(TARGET_CPU)" == "arm"
++ARCH_SUFFIX = _arm
++!endif
+ !if "$(TARGET_CPU)" == "arm64"
+ ARCH_SUFFIX = _arm64
+ !endif
+@@ -1942,6 +1948,9 @@ LIBTYPE_SUFFIX = dll
+ !if "$(TARGET_CPU)" == "AMD64"
+ LINK_TARGET_CPU = /MACHINE:X64
+ !endif
++!if "$(TARGET_CPU)" == "ARM"
++LINK_TARGET_CPU = /MACHINE:ARM
++!endif
+ !if "$(TARGET_CPU)" == "ARM64"
+ LINK_TARGET_CPU = /MACHINE:ARM64
+ !endif
+@@ -1960,6 +1969,9 @@ LINK_TARGET_CPU = /MACHINE:X64
+ !if "$(TARGET_CPU)" == "amd64"
+ LINK_TARGET_CPU = /MACHINE:X64
+ !endif
++!if "$(TARGET_CPU)" == "arm"
++LINK_TARGET_CPU = /MACHINE:ARM
++!endif
+ !if "$(TARGET_CPU)" == "arm64"
+ LINK_TARGET_CPU = /MACHINE:ARM64
+ !endif
+diff --git a/build/msw/wx_setup.props b/build/msw/wx_setup.props
+index 8aac1ee69598..d48187af5daf 100644
+--- a/build/msw/wx_setup.props
++++ b/build/msw/wx_setup.props
+@@ -29,6 +29,9 @@
+   <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='x64'">
+     <wxArchSuffix>_x64</wxArchSuffix>
+   </PropertyGroup>
++  <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='ARM'">
++    <wxArchSuffix>_arm</wxArchSuffix>
++  </PropertyGroup>
+   <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='ARM64'">
+     <wxArchSuffix>_arm64</wxArchSuffix>
+   </PropertyGroup>
+diff --git a/docs/msw/install.md b/docs/msw/install.md
+index 38f0b7c813ad..12ee4c65d451 100644
+--- a/docs/msw/install.md
++++ b/docs/msw/install.md
+@@ -367,7 +367,7 @@ The full list of the build settings follows:
+   usable .pdb files with debug information) and this setting makes it
+   possible.
+ 
+-* `TARGET_CPU=X64|ARM64|IA64`
++* `TARGET_CPU=X64|ARM|ARM64|IA64`
+ 
+   (VC++ only.) Set this variable to build for x86_64 systems. If unset, x86
+   build is performed.
+diff --git a/include/msvc/wx/setup.h b/include/msvc/wx/setup.h
+index 380c68a27638..bf095e36b10c 100644
+--- a/include/msvc/wx/setup.h
++++ b/include/msvc/wx/setup.h
+@@ -76,6 +76,8 @@
+ // architecture-specific part: not used (again, for compatibility), for x86
+ #if defined(_M_X64)
+     #define wxARCH_SUFFIX _x64
++#elif defined(_M_ARM)
++    #define wxARCH_SUFFIX _arm
+ #elif defined(_M_ARM64)
+     #define wxARCH_SUFFIX _arm64
+ #elif defined(_M_IA64)
+diff --git a/src/msw/stackwalk.cpp b/src/msw/stackwalk.cpp
+index eb9fc167ae47..b54c9b8ed9fe 100644
+--- a/src/msw/stackwalk.cpp
++++ b/src/msw/stackwalk.cpp
+@@ -230,6 +230,16 @@ void wxStackWalker::WalkFrom(const CONTEXT *pCtx, size_t skip, size_t maxDepth)
+     sf.AddrFrame.Mode      = AddrModeFlat;
+ 
+     dwMachineType = IMAGE_FILE_MACHINE_AMD64;
++#elif defined(_M_ARM)
++    // TODO: Verify this code on ARM
++    sf.AddrPC.Offset       = ctx.Pc;
++    sf.AddrPC.Mode         = AddrModeFlat;
++    sf.AddrStack.Offset    = ctx.Sp;
++    sf.AddrStack.Mode      = AddrModeFlat;
++    sf.AddrFrame.Offset    = ctx.R11;
++    sf.AddrFrame.Mode      = AddrModeFlat;
++
++    dwMachineType = IMAGE_FILE_MACHINE_ARM;
+ #elif defined(_M_ARM64)
+     // TODO: Verify this code once Windows 10 for ARM64 is commercially available
+     sf.AddrPC.Offset       = ctx.Pc;
+@@ -332,7 +342,7 @@ void wxStackWalker::Walk(size_t skip, size_t maxDepth)
+     // Software License.
+ 
+     CONTEXT ctx;
+-#ifdef __WIN64__
++#if defined(__WIN64__) || defined(_M_ARM)
+     RtlCaptureContext(&ctx);
+ #else // Win32
+     // RtlCaptureContext() is not implemented correctly for x86 and can even
+diff --git a/src/msw/stdpaths.cpp b/src/msw/stdpaths.cpp
+index fca59bbfd46f..49f37a3bf35a 100644
+--- a/src/msw/stdpaths.cpp
++++ b/src/msw/stdpaths.cpp
+@@ -261,6 +261,7 @@ void wxStandardPaths::IgnoreAppBuildSubDirs()
+ #else // __WIN32__
+     IgnoreAppSubDir("Win32");
+     IgnoreAppSubDir("x86");
++    IgnoreAppSubDir("ARM");
+ #endif // __WIN64__/__WIN32__
+ 
+     wxString compilerPrefix;

@@ -24,7 +24,7 @@ patch -p1 <../../patches/amule-fix-boost_llvm.patch
 patch -p1 <../../patches/0001-Apply-the-patch-for-wx-3.2-support-customized-by-deb.patch
 
 ./autogen.sh
-./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -DHAVE_LIBCURL -D_UNICODE=1 -DUNICODE=1" \
+./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -DHAVE_LIBCURL -Wno-error=register -D_UNICODE=1 -DUNICODE=1" \
     LDFLAGS="-L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib" \
     CXXFLAGS="-DCURL_STATICLIB" CFLAGS="-DCURL_STATICLIB" \
     --prefix=$BUILDDIR/amule --host=$TARGET \
