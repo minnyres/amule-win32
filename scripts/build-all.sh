@@ -72,3 +72,6 @@ fi
 ./scripts/boost.sh
 ./scripts/amule.sh
 ./scripts/amule-dlp.sh
+
+rm -rf amule-dlp
+rm -rf amule
