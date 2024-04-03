@@ -2,13 +2,11 @@
 
 set -e
 
-mkdir -p amule-dlp
 
 if [ "$USE_LLVM" == "yes" ]; then
     export RC=$PWD/scripts/llvm-windres.sh
     denoise_level=0
 else
-    cp curl-ca-bundle.crt amule-dlp
     denoise_level=4
 fi
 
@@ -24,8 +22,8 @@ patch -p1 <../../patches/amule-fix-dlp.patch
 patch -p1 <../../patches/amule-fix-boost_llvm.patch
 
 ./autogen.sh
-./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -DHAVE_LIBCURL -Wno-error=register -D_UNICODE=1 -DUNICODE=1" \
-    LDFLAGS="-L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib" \
+./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -I$BUILDDIR/gettext/include -DHAVE_LIBCURL -Wno-error=register -D_UNICODE=1 -DUNICODE=1" \
+    LDFLAGS="-L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib -L$BUILDDIR/gettext/lib -lintl -lpthread" \
     CXXFLAGS="-DCURL_STATICLIB" CFLAGS="-DCURL_STATICLIB" \
     --prefix=$BUILDDIR/amule-dlp --host=$TARGET \
     --enable-amule-daemon --enable-webserver --enable-amulecmd --enable-amule-gui \
@@ -67,4 +65,3 @@ cp -r $BUILDDIR/amule-dlp/share/amule-dlp/* amule-dlp
 mkdir -p amule-dlp/docs
 cp $BUILDDIR/amule-dlp/share/doc/amule-dlp/* amule-dlp/docs
 7z a -mx9 amule-dlp-$(printf '%(%Y-%m-%d)T\n' -1)-$ARCH.7z amule-dlp
-rm -rf amule-dlp

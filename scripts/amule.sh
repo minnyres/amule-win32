@@ -2,13 +2,10 @@
 
 set -e
 
-mkdir -p amule
-
 if [ "$USE_LLVM" == "yes" ]; then
     export RC=$PWD/scripts/llvm-windres.sh
     denoise_level=0
 else
-    cp curl-ca-bundle.crt amule
     denoise_level=4
 fi
 
@@ -24,8 +21,8 @@ patch -p1 <../../patches/amule-fix-boost_llvm.patch
 patch -p1 <../../patches/0001-Apply-the-patch-for-wx-3.2-support-customized-by-deb.patch
 
 ./autogen.sh
-./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -DHAVE_LIBCURL -Wno-error=register -D_UNICODE=1 -DUNICODE=1" \
-    LDFLAGS="-L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib" \
+./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -I$BUILDDIR/gettext/include -DHAVE_LIBCURL -Wno-error=register -D_UNICODE=1 -DUNICODE=1" \
+    LDFLAGS="-L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib -L$BUILDDIR/gettext/lib -lintl -lpthread" \
     CXXFLAGS="-DCURL_STATICLIB" CFLAGS="-DCURL_STATICLIB" \
     --prefix=$BUILDDIR/amule --host=$TARGET \
     --enable-amule-daemon --enable-webserver --enable-amulecmd --enable-amule-gui \
@@ -57,4 +54,3 @@ cp -r $BUILDDIR/amule/share/amule/* amule
 mkdir -p amule/docs
 cp $BUILDDIR/amule/share/doc/amule/* amule/docs
 7z a -mx9 amule-${amule_version}-$ARCH.7z amule
-rm -rf amule

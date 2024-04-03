@@ -2,7 +2,7 @@
 
 set -e
 
-if [ "$USE_LLVM" == "yes" ]; then
+if [ "$ARCH" == "win32-arm" ]; then
     ssl_option="--with-schannel"
 else
     ssl_option="--with-mbedtls=$BUILDDIR/mbedtls --with-ca-bundle=./curl-ca-bundle.crt"

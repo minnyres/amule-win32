@@ -50,15 +50,20 @@ export BUILDDIR
 export USE_LLVM
 export ARCH
 
+mkdir -p amule
+mkdir -p amule-dlp
+
 ./scripts/zlib.sh
 ./scripts/libpng.sh
 ./scripts/libiconv.sh
+./scripts/gettext.sh
 ./scripts/geoip.sh
 ./scripts/libupnp.sh
 
-if [ "$USE_LLVM" == "no" ]; then
-    ./scripts/gettext.sh
+if [ "$ARCH" == "win32" ]; then
     ./scripts/mbedtls.sh
+    cp  curl-ca-bundle.crt amule
+    cp  curl-ca-bundle.crt amule-dlp
 fi
 
 ./scripts/curl.sh
