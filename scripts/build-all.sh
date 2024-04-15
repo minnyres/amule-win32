@@ -50,6 +50,10 @@ export BUILDDIR
 export USE_LLVM
 export ARCH
 
+export PKG_CONFIG_LIBDIR="$BUILDDIR/libpng/lib/pkgconfig:$BUILDDIR/zlib/lib/pkgconfig:$BUILDDIR/libgd/lib/pkgconfig"
+export PKG_CONFIG_PATH=$PKG_CONFIG_LIBDIR
+export PKG_CONFIG_SYSROOT_DIR=$BUILDDIR
+
 mkdir -p amule
 mkdir -p amule-dlp
 
@@ -70,6 +74,7 @@ fi
 ./scripts/cryptopp-autotools.sh
 ./scripts/wxwidgets.sh
 ./scripts/boost.sh
+./scripts/libgd.sh
 ./scripts/amule.sh
 ./scripts/amule-dlp.sh
 
