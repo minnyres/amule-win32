@@ -5,8 +5,7 @@ set -e
 cd src/libpng
 mkdir -p build-$TARGET
 cd build-$TARGET
-../configure CPPFLAGS="-I$BUILDDIR/zlib/include" LDFLAGS="-L$BUILDDIR/zlib/lib" \
-    --host=$TARGET --prefix=$BUILDDIR/libpng --with-zlib-prefix=$BUILDDIR/zlib --enable-shared=no
+../configure --host=$TARGET --prefix=$BUILDDIR/libpng --with-zlib-prefix=$BUILDDIR/zlib --enable-shared=no
 mkdir -p $BUILDDIR/libpng/lib
 ln -snf lib $BUILDDIR/libpng/lib64
 make -j$(nproc)

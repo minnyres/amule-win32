@@ -50,9 +50,13 @@ export BUILDDIR
 export USE_LLVM
 export ARCH
 
-export PKG_CONFIG_LIBDIR="$BUILDDIR/libpng/lib/pkgconfig:$BUILDDIR/zlib/lib/pkgconfig:$BUILDDIR/libgd/lib/pkgconfig"
+export PKG_CONFIG_LIBDIR="$BUILDDIR/libpng/lib/pkgconfig:$BUILDDIR/zlib/lib/pkgconfig:$BUILDDIR/libgd/lib/pkgconfig:$BUILDDIR/libiconv/lib/pkgconfig"
 export PKG_CONFIG_PATH=$PKG_CONFIG_LIBDIR
 export PKG_CONFIG_SYSROOT_DIR=$BUILDDIR
+export CXXFLAGS="-g0 -O2"
+export CFLAGS="-g0 -O2"
+export CPPFLAGS="-I$BUILDDIR/libiconv/include -I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -I$BUILDDIR/gettext/include"
+export LDFLAGS="-L$BUILDDIR/libiconv/lib -L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib -L$BUILDDIR/gettext/lib -s --static"
 
 mkdir -p amule
 mkdir -p amule-dlp

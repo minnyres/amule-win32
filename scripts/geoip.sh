@@ -2,10 +2,6 @@
 
 set -e
 
-export CXXFLAGS="-g0 -Os"
-export CFLAGS="-g0 -Os"
-export LDFLAGS="-s"
-
 cd src/geoip-api-c
 ./bootstrap
 mkdir -p build-$TARGET

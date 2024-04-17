@@ -22,9 +22,9 @@ patch -p1 <../../patches/amule-fix-dlp.patch
 patch -p1 <../../patches/amule-fix-boost_llvm.patch
 
 ./autogen.sh
-./configure CPPFLAGS="-I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -I$BUILDDIR/gettext/include -DHAVE_LIBCURL -Wno-error=register -D_UNICODE=1 -DUNICODE=1" \
-    LDFLAGS="-L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib -L$BUILDDIR/gettext/lib -lintl -lpthread" \
-    CXXFLAGS="-DCURL_STATICLIB" CFLAGS="-DCURL_STATICLIB" \
+./configure CPPFLAGS="$CPPFLAGS -Wno-error=register -D_UNICODE=1 -DUNICODE=1" \
+    LDFLAGS="$LDFLAGS -lintl -pthread" \
+    CXXFLAGS="$CXXFLAGS -DCURL_STATICLIB -pthread" CFLAGS="$CFLAGS -DCURL_STATICLIB -pthread" \
     --prefix=$BUILDDIR/amule-dlp --host=$TARGET \
     --enable-amule-daemon --enable-webserver --enable-amulecmd --enable-amule-gui \
     --enable-cas --enable-wxcas --enable-alc --enable-alcc --enable-fileview \

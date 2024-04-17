@@ -10,7 +10,7 @@ cd src/libgd
 ./bootstrap.sh
 mkdir -p build-$TARGET
 cd build-$TARGET
-../configure CPPFLAGS=$cppflags \
+../configure CPPFLAGS="$CPPFLAGS $cppflags" \
     --host=$TARGET --prefix=$BUILDDIR/libgd  \
     --with-zlib=$BUILDDIR/zlib --with-png=$BUILDDIR/libpng \
     --enable-shared=no --enable-static
