@@ -19,7 +19,7 @@ patch -p1 <../../patches/amule-fix-dlp.patch
 patch -p1 <../../patches/amule-fix-boost_llvm.patch
 
 ./autogen.sh
-./configure CPPFLAGS="$CPPFLAGS -Wno-error=register -D_UNICODE=1 -DUNICODE=1" \
+./configure CPPFLAGS="$CPPFLAGS -D_UNICODE=1 -DUNICODE=1" \
     LDFLAGS="$LDFLAGS -lintl -pthread" \
     CXXFLAGS="$CXXFLAGS -DCURL_STATICLIB -pthread" CFLAGS="$CFLAGS -DCURL_STATICLIB -pthread" \
     --prefix=$BUILDDIR/amule-dlp --host=$TARGET \

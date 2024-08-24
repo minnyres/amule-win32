@@ -55,7 +55,7 @@ export PKG_CONFIG_PATH=$PKG_CONFIG_LIBDIR
 export PKG_CONFIG_SYSROOT_DIR=$BUILDDIR
 export CXXFLAGS="-g0 -O2"
 export CFLAGS="-g0 -O2"
-export CPPFLAGS="-I$BUILDDIR/libiconv/include -I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -I$BUILDDIR/gettext/include -Wno-error=incompatible-pointer-types"
+export CPPFLAGS="-I$BUILDDIR/libiconv/include -I$BUILDDIR/zlib/include -I$BUILDDIR/libpng/include -I$BUILDDIR/gettext/include  -Wno-error=register -Wno-error=incompatible-pointer-types"
 export LDFLAGS="-L$BUILDDIR/libiconv/lib -L$BUILDDIR/zlib/lib -L$BUILDDIR/libpng/lib -L$BUILDDIR/gettext/lib -s --static"
 
 mkdir -p amule
