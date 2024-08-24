@@ -7,6 +7,7 @@ if [ "$USE_LLVM" == "yes" ]; then
 fi
 
 cd src/libgd
+patch -p1 <../../patches/libgd-fix-static-use.patch
 ./bootstrap.sh
 mkdir -p build-$TARGET
 cd build-$TARGET

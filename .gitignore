@@ -2,3 +2,5 @@
 /toolchain/
 /build*/
 *.7z
+/amule/
+/amule-dlp/

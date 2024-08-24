@@ -4,9 +4,6 @@ set -e
 
 if [ "$USE_LLVM" == "yes" ]; then
     export RC=$PWD/scripts/llvm-windres.sh
-    denoise_level=0
-else
-    denoise_level=4
 fi
 
 cd src/amule
@@ -36,9 +33,9 @@ patch -p1 <../../patches/0001-Apply-the-patch-for-wx-3.2-support-customized-by-d
     --with-geoip-static -with-geoip-lib=$BUILDDIR/geoip/lib --with-geoip-headers=$BUILDDIR/geoip/include \
     --with-libpng-prefix=$BUILDDIR/libpng --with-libpng-config=$BUILDDIR/libpng/bin/libpng-config \
     --enable-static-boost --with-boost=$BUILDDIR/boost \
-    --with-libupnp-prefix=$BUILDDIR/libupnp --with-denoise-level=$denoise_level --enable-ccache
+    --with-libupnp-prefix=$BUILDDIR/libupnp --with-denoise-level=0 --enable-ccache
 
-make GDLIB_LIBS="-lgd -lpng16 -lz" BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lwsock32 -lws2_32" BOOST_SYSTEM_LDFLAGS="-L$BUILDDIR/boost/lib" -j$(nproc)
+make GDLIB_LIBS="-lgd -liconv -lpng16 -lz" BOOST_SYSTEM_LIBS="$BUILDDIR/boost/lib/libboost_system.a -lwsock32 -lws2_32" BOOST_SYSTEM_LDFLAGS="-L$BUILDDIR/boost/lib" -j$(nproc)
 make install
 make clean
 
