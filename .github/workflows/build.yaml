@@ -4,8 +4,8 @@ on:
   push:
 
 jobs:
-  build-windows:
-    name: Build for Windows
+  build-x86:
+    name: Build for Windows (x86)
     runs-on: ubuntu-latest
             
     steps:
@@ -32,29 +32,59 @@ jobs:
       - name: Build aMule (x86)
         run: docker run --user $(id -u):$(id -g) --rm -t -v $PWD:/build builder sh -c "cd /build && ./scripts/build-all.sh -arch=x86 -cc=gcc"
 
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: amule_windows_x86
+          path: amule*.7z
+
+  build-arm32:
+    name: Build for Windows (arm32)
+    runs-on: ubuntu-latest
+            
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Docker Environment
+        run: docker build -f Dockerfile -t builder .
+
+      - name: Get Source code
+        run: docker run --user $(id -u):$(id -g) --rm -t -v $PWD:/build builder sh -c "cd /build && ./scripts/download_and_prepare.sh"
+
       - name: Build aMule (arm)
         run: |
           wget https://github.com/mstorsjo/llvm-mingw/releases/download/20240619/llvm-mingw-20240619-ucrt-ubuntu-20.04-x86_64.tar.xz
           tar xf llvm-mingw-*.tar.xz
           rm llvm-mingw-*.tar.xz
+          mkdir -p toolchain
           mv llvm-mingw-* toolchain/clang
           docker run --user $(id -u):$(id -g) --rm -t -v $PWD:/build builder sh -c "cd /build && ./scripts/build-all.sh -arch=arm32 -cc=clang"
-
-      - name: Prepare build artifacts
-        run: |
-          sha256sum *.7z
-          mkdir -p upload
-          cp amule*.7z upload
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: amule_windows
-          path: upload
+          name: amule_windows_arm32
+          path: amule*.7z
+
+  release:
+    name: Release
+    needs: [build-x86, build-arm32]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download temp artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: amule_windows_*
+          merge-multiple: true
+
+      - name: Compute Hashes
+        run: |
+          sha256sum *.7z
 
       - name: Batch release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

@@ -4,3 +4,4 @@
 *.7z
 /amule/
 /amule-dlp/
+curl*.crt

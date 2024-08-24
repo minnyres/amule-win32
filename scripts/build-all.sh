@@ -70,6 +70,7 @@ mkdir -p amule-dlp
 
 if [ "$ARCH" == "win32" ]; then
     ./scripts/mbedtls.sh
+    wget https://curl.se/ca/cacert.pem -O curl-ca-bundle.crt
     cp  curl-ca-bundle.crt amule
     cp  curl-ca-bundle.crt amule-dlp
 fi
