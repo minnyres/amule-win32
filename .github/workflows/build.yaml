@@ -35,7 +35,7 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: amule_windows_x86
+          name: amule_windows
           path: amule*.7z
 
   build-arm32:
@@ -64,7 +64,7 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: amule_windows_arm32
+          name: amule_windows
           path: amule*.7z
 
   release:
@@ -74,10 +74,10 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Download temp artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
-          pattern: amule_windows_*
-          merge-multiple: true
+          name:
+            amule_windows  
 
       - name: Compute Hashes
         run: |
